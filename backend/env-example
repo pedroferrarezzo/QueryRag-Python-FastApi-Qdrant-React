@@ -1,0 +1,4 @@
+GEMINI_API_KEY=xxxxxx
+QDRANT_HOST=localhost
+QDRANT_PORT=6333
+QDRANT_COLLECTION=rag_documents

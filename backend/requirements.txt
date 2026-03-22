@@ -1,0 +1,12 @@
+fastapi 
+uvicorn 
+faiss-cpu 
+sentence-transformers 
+pillow 
+docling 
+python-multipart
+huggingface_hub[hf_xet]
+python-dotenv 
+websockets
+google.genai
+qdrant_client
