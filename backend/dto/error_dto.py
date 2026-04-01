@@ -4,7 +4,7 @@ from pydantic import BaseModel
 class ErrorDto(BaseModel):
     """Classe para representar um erro ocorrido durante o processamento de uma requisição."""
     
-    message: str
+    error_message: str
     """Mensagem de erro detalhada para o cliente."""
 
     timestamp: str = datetime.now().isoformat()

@@ -42,7 +42,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     prompt_mime_type = mime.from_buffer(prompt_raw_bytes)
 
             except Exception:
-                await websocket.send_json(ErrorDto(message="Erro ao decodificar a mensagem.").model_dump())
+                await websocket.send_json(ErrorDto(error_message="Erro ao decodificar a mensagem.").model_dump())
                 continue
 
             if not prompt and not prompt_raw_bytes:
@@ -58,7 +58,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 if not documents:
                     await websocket.send_json(ErrorDto(
-                        message="Nenhum documento relevante encontrado para a consulta."
+                        error_message="Nenhum documento relevante encontrado para a consulta."
                     ).model_dump())
                     continue
 
@@ -88,11 +88,11 @@ async def websocket_endpoint(websocket: WebSocket):
 
             except LmmException as e:
                 await websocket.send_json(ErrorDto(
-                    message=str(e)
+                    error_message=str(e)
                 ).model_dump())
             except Exception as e:
                 await websocket.send_json(ErrorDto(
-                    message="Erro inesperado durante o processamento da resposta: " + str(e)
+                    error_message="Erro inesperado durante o processamento da resposta: " + str(e)
                 ).model_dump())
 
     except WebSocketDisconnect:
