@@ -1,16 +1,14 @@
+from pydantic import BaseModel
 from model.metadata import Metadata
 
-class Document:
+class Document(BaseModel):
     """Classe para representar um documento recuperado durante o RAG, incluindo seu conteúdo, metadados e pontuação."""
 
-    def __init__(self, metadata: Metadata, score:float, rerank_score:float =None):
-        """Inicializa um objeto document."""
+    metadata: Metadata
+    """Metadados do documento recuperado."""
 
-        """Metadados do documento recuperado."""
-        self.metadata = metadata
+    score: float
+    """Pontuação do documento."""
 
-        """Pontuação do documento."""
-        self.score = score
-
-        """Pontuação de reranking do documento (opcional)."""
-        self.rerank_score = rerank_score
+    rerank_score: float | None
+    """Pontuação de reranking do documento (opcional)."""

@@ -1,11 +1,11 @@
-class RagQueryDto:
+from pydantic import BaseModel
+from model.document import Document
+
+class RagQueryDto(BaseModel):
     """Classe para representar o resultado de consulta de RAG."""
  
-    def __init__(self, query: str, documents: list):
-        """Inicializa um objeto."""
+    query: str
+    """Texto da consulta realizada."""
 
-        """Texto da consulta realizada."""
-        self.query = query
-
-        """Lista de documentos recuperados como resposta à consulta."""
-        self.documents = documents
+    documents: list[Document]
+    """Lista de documentos recuperados como resposta à consulta."""

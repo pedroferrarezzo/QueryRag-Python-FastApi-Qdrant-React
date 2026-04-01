@@ -1,6 +1,7 @@
 import re
 
 def clean_text(text: str) -> str:
+    """Limpa o texto extraído, removendo linhas que são compostas principalmente por símbolos ou que têm uma baixa proporção de caracteres alfanuméricos, o que pode indicar que são partes "quebradas" ou não informativas do documento. Melhorando a qualidade do texto antes do chunking e embedding."""
     # Remove linhas compostas só por símbolos/tabelas
     text = re.sub(r'^[\s\|\-\+\.\(\)◎○]+$', '', text, flags=re.MULTILINE)
 

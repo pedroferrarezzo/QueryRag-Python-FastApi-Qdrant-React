@@ -1,0 +1,21 @@
+from pydantic import BaseModel
+from qdrant_client.models import datetime
+from model.document import Document
+
+class LmmResponseDto(BaseModel):
+    """Classe para representar o resultado de consulta ao LMM."""
+    
+    type: str
+    """Tipo do conteúdo retornado (ex: 'text', 'binary', etc.)"""
+    
+    data: str
+    """Conteúdo retornado, que pode ser texto ou dados binários codificados em base64."""
+
+    mime_type: str | None = None
+    """Tipo MIME do conteúdo, presente apenas para dados binários."""
+
+    timestamp: str = datetime.now().isoformat()
+    """Timestamp da resposta, no formato ISO 8601."""
+
+    documents: list[Document]
+    """Documentos recuperados durante o RAG e utilizados pelo LMM para gerar a resposta."""

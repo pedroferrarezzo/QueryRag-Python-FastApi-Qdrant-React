@@ -1,5 +1,4 @@
-name: poc-rag
-version: "3.8"
+name: query-rag
 
 services:
   qdrant:
@@ -12,5 +11,19 @@ services:
       - qdrant_data:/qdrant/storage
     restart: unless-stopped
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console web
+    env_file:
+      - .env
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+
 volumes:
   qdrant_data:
+  minio_data:

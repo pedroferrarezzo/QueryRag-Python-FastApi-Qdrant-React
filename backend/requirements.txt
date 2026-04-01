@@ -10,3 +10,5 @@ python-dotenv
 websockets
 google.genai
 qdrant_client
+miniopy-async
+python-magic-bin

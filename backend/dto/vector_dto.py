@@ -1,17 +1,20 @@
-class VectorDto:
+from pydantic import BaseModel
+
+class VectorDto(BaseModel):
     """Classe para representar um conteúdo vetorizado via embedding."""
+
+    vector: list[float]
+    """vetor resultante do embedding."""
+
+    type: str
+    """tipo do conteúdo (ex: texto, imagem, etc)."""
     
-    def __init__(self, vector, type, chunk, source=None):
-        """Inicializa um objeto."""
+    chunk: str | None = None
+    """conteúdo a ser vetorizado."""
 
-        """vetor resultante do embedding."""
-        self.vector = vector
+    source: str
+    """fonte do conteúdo (ex: nome do arquivo, URL, etc)."""
 
-        """tipo do conteúdo (ex: texto, imagem, etc)."""
-        self.type = type
+    object_storage_key: str | None = None
+    """chave de armazenamento em object storage, se aplicável."""
         
-        """conteúdo a ser vetorizado."""
-        self.chunk = chunk
-
-        """fonte do conteúdo (ex: nome do arquivo, URL, etc)."""
-        self.source = source

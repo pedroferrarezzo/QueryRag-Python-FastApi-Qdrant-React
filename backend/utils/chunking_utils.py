@@ -1,46 +1,48 @@
-from PIL import Image
 import re
 
-# Overlap serve para garantir que o contexto seja mantido entre os chunks, evitando que informações importantes sejam perdidas na divisão do texto.
-def chunk_text(text: str, max_size: int = 500, overlap: int = 50):
-        # Validação
-    if overlap >= max_size:
-        raise ValueError("overlap deve ser menor que max_size")
-    
-    if not text or max_size <= 0:
+CHUNCK_LIST_MAX_LENGTH = 70
+
+def chunk_text(text: str) -> list[str]:
+    """Realiza a quebra do texto em chunks semânticos para geração de embeddings."""
+    if not text:
         return []
-    
-    chunks = []
-    start = 0
-    
-    while start < len(text):
-        # Define o fim do chunk
-        end = start + max_size
-        
-        # Se não é o último chunk, tenta quebrar em uma sentença ou palavra
-        if end < len(text):
-            # Tenta quebrar no último ponto final antes de end
-            last_period = text.rfind('.', start, end)
-            if last_period != -1 and last_period > start + max_size // 2:
-                end = last_period + 1
-            else:
-                # Caso contrário, tenta quebrar no último espaço
-                last_space = text.rfind(' ', start, end)
-                if last_space != -1 and last_space > start + max_size // 2:
-                    end = last_space
 
-        chunk = text[start:end].strip()
-        
-        if chunk and is_valid_chunk(chunk):
-            chunks.append(chunk)
-        
-        # Move o início para o próximo chunk com overlap
-        start = end - overlap
-    
-    return chunks
+    # 1. quebra semântica
+    units = split_semantic(text)
 
+    # 3. garantir limite de chunks
+    chunks = enforce_max_chunks(units, CHUNCK_LIST_MAX_LENGTH)
+
+    # 4. validação final
+    return [c for c in chunks if is_valid_chunk(c)]
+
+def split_semantic(text: str) -> list[str]:
+    """Divide o texto em unidades semânticas, como parágrafos ou sentenças, para preservar o contexto e a coesão do conteúdo, o que pode resultar em chunks mais significativos para a geração de embeddings."""
+    paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
+    
+    # fallback se não houver estrutura
+    if len(paragraphs) <= 1:
+        sentences = re.split(r'(?<=[.!?])\s+', text)
+        return [s.strip() for s in sentences if s.strip()]
+    
+    return paragraphs
+
+def enforce_max_chunks(chunks: list[str], max_chunks: int) -> list[str]:
+    """Garante que a lista de chunks não exceda o limite máximo, mesclando chunks adjacentes quando necessário."""
+    if len(chunks) <= max_chunks:
+        return chunks
+
+    factor = len(chunks) // max_chunks + 1
+    new_chunks = []
+
+    for i in range(0, len(chunks), factor):
+        merged = " ".join(chunks[i:i+factor])
+        new_chunks.append(merged)
+
+    return new_chunks
 
 def is_valid_chunk(text: str) -> bool:
+    """Valida se um chunk é útil para gerar um embedding, filtrando chunks muito curtos ou com baixa proporção de caracteres alfanuméricos, o que pode indicar que o chunk é "quebrado" ou contém principalmente símbolos, e portanto pode não ser útil para representação semântica."""
     text = text.strip()
 
     if len(text) < 50:

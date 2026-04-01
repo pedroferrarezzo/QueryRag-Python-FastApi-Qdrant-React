@@ -1,14 +1,16 @@
-class Metadata:
+from pydantic import BaseModel
+
+class Metadata(BaseModel):
     """Classe para armazenar metadados de um documento recuperado durante o RAG."""
 
-    def __init__(self, type: str, chunk: str, source: str):
-        """Inicializa um objeto metadata."""
+    type: str
+    """Tipo do documento."""
 
-        """Tipo do documento."""
-        self.type = type
+    chunk: str | None
+    """Conteúdo do documento."""
 
-        """Conteúdo do documento."""
-        self.chunk = chunk
+    source: str
+    """Fonte do documento."""
 
-        """Fonte do documento."""
-        self.source = source
+    object_storage_key: str | None
+    """chave de armazenamento em object storage, se aplicável."""
