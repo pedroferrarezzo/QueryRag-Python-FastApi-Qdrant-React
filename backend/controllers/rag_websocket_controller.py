@@ -3,6 +3,7 @@ import base64
 import logging
 
 from fastapi import WebSocket, WebSocketDisconnect
+from fastapi.websockets import WebSocketState
 
 from dto import ErrorDto, LmmResponseDto
 
@@ -24,7 +25,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
     try:
-        while True:
+        while True and websocket.client_state == WebSocketState.CONNECTED:
             message = await websocket.receive()
 
             prompt = None
