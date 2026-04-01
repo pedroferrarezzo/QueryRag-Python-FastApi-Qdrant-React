@@ -19,7 +19,7 @@ from fastapi import APIRouter
 router = APIRouter()
 logger = logging.getLogger("app")
 
-@router.websocket("/ws/rag")
+@router.websocket("/rag/chat")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
 
