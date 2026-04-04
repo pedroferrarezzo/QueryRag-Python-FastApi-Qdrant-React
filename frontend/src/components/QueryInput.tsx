@@ -3,37 +3,45 @@ import {
   InputGroupAddon,
 } from "@/components/ui/input-group"
 import { Textarea } from "@/components/ui/textarea"
-import { SearchIcon } from "lucide-react"
 import type { Dispatch, SetStateAction, KeyboardEvent } from "react"
-import type { RagConversation } from "../types/rag-conversation"
+import type { RagQuestion } from "../types/rag"
+import type { ServerConnectionStatus } from "@/types/server"
+import AudioRecorder from "./AudioRecorder"
 
-type Props = {
+/** Props para o componente QueryInput */
+type QueryInputProps = {
   value: string,
-  setSearchIsTriggered: Dispatch<SetStateAction<boolean>>
   setValue: Dispatch<SetStateAction<string>>,
-  setRagConversations: Dispatch<SetStateAction<RagConversation[]>>,
-  className?: string
+  setRagQuestions: Dispatch<SetStateAction<RagQuestion[]>>,
+  className?: string,
+  connectionStatus: ServerConnectionStatus,
+  chatInProgress: boolean
 }
 
-export default function QueryInput({ value, setSearchIsTriggered, setValue, setRagConversations, className }: Props) {
+/** Componente para entrada de perguntas, com suporte a envio via Enter e visualização do status do servidor RAG */
+export default function QueryInput(props: QueryInputProps) {
 
   function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       
-      if (value.trim() === "") return
+      if (props.value.trim() === "") return
 
-      setSearchIsTriggered(true);
-      setRagConversations((prev) => [...prev, { id: crypto.randomUUID(), question: value, answer: "" }]);
-      setValue("");
+      props.setRagQuestions((prev) => [...prev, { id: crypto.randomUUID(), question: props.value, timestamp: new Date() }]);
+      props.setValue("");
     }
   }
 
+  function handleAudioSend(blob: Blob) {
+      props.setRagQuestions((prev) => [...prev, { id: crypto.randomUUID(), question: blob, timestamp: new Date() }]);
+      props.setValue("");
+  }
+
   return (
-    <InputGroup className={className}>
+    <InputGroup className={props.className}>
       <Textarea
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
+        value={props.value}
+        onChange={(e) => props.setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Escreva sua pergunta"
         className="
@@ -46,9 +54,10 @@ export default function QueryInput({ value, setSearchIsTriggered, setValue, setR
           focus-visible:outline-none
           focus-visible:border-input
         "
+        disabled={props.connectionStatus !== "connected" || props.chatInProgress}
       />
-      <InputGroupAddon align="inline-end" className="absolute right-2 bottom-2">
-        <SearchIcon />
+      <InputGroupAddon align="inline-end" className="absolute right-2 flex items-center gap-1">
+        <AudioRecorder onSend={handleAudioSend} disabled={props.connectionStatus !== "connected" || props.chatInProgress} />
       </InputGroupAddon>
     </InputGroup>
   )
