@@ -18,6 +18,9 @@ async def log_context_middleware(request: Request, call_next):
     try:
         response = await call_next(request)
         return response
+    except Exception as e:
+        logger.error("request_error: %s", e)
+        raise
     finally:
         if response:
             put_log_context("response_status_code", response.status_code)

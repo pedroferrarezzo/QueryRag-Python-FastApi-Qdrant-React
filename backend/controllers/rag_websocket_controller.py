@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import base64
 import logging
@@ -12,6 +13,8 @@ from service.embedding_service import embed_data
 from service.gemini_service import contact_ai
 
 from repository.vector_qdrant_repository import search_vector
+
+from config.canonical_logger import put_log_context, clear_log_context
 
 import magic
 
@@ -28,7 +31,9 @@ async def websocket_endpoint(websocket: WebSocket):
         while True and websocket.client_state == WebSocketState.CONNECTED:
             message = await websocket.receive()
 
+            questionId = None
             prompt = None
+            prompt_b64 = None
             prompt_raw_bytes = None
             prompt_mime_type = None
 
@@ -36,30 +41,44 @@ async def websocket_endpoint(websocket: WebSocket):
                 if "text" in message:
                     payload = json.loads(message["text"])
                     prompt = payload.get("prompt")
+                    questionId = payload.get("questionId")
+                    prompt_b64 = payload.get("prompt_b64")
+                
+                    if not questionId:
+                        await websocket.send_json(ErrorDto(data="questionId é obrigatório.", timestamp=datetime.now().isoformat()).model_dump())
+                        continue
 
-                elif "bytes" in message:
-                    prompt_raw_bytes = message["bytes"]
+                if prompt_b64:
+                    prompt_raw_bytes = base64.b64decode(prompt_b64)
                     mime = magic.Magic(mime=True)
                     prompt_mime_type = mime.from_buffer(prompt_raw_bytes)
 
-            except Exception:
-                await websocket.send_json(ErrorDto(error_message="Erro ao decodificar a mensagem.").model_dump())
+            except Exception as e:
+                logger.error("request_error: %s", e)
+                await websocket.send_json(ErrorDto(data="Erro ao decodificar a mensagem.", timestamp=datetime.now().isoformat()).model_dump())
                 continue
 
             if not prompt and not prompt_raw_bytes:
                 continue
 
+            put_log_context("prompt_received", prompt if prompt else "binary_data_received")
+            put_log_context("mime_type", prompt_mime_type if prompt_mime_type else "N/A")
+
             try:
                 if prompt_raw_bytes:
+                    put_log_context("query_vector_embed_type", "binary")
                     query_vector = await embed_data(prompt_raw_bytes, prompt_mime_type)
                 else:
+                    put_log_context("query_vector_embed_type", "text")
                     query_vector = await embed_data(prompt)
 
+                put_log_context("query_vector_length", len(query_vector) if query_vector else 0)
                 documents = await search_vector(query_vector, 5)
 
                 if not documents:
                     await websocket.send_json(ErrorDto(
-                        error_message="Nenhum documento relevante encontrado para a consulta."
+                        data="Nenhum documento relevante encontrado para a consulta.",
+                        timestamp=datetime.now().isoformat()
                     ).model_dump())
                     continue
 
@@ -71,7 +90,9 @@ async def websocket_endpoint(websocket: WebSocket):
                             await websocket.send_json(LmmResponseDto(
                                 type="text",
                                 data=part.text,
-                                documents=documents
+                                documents=documents,
+                                timestamp=datetime.now().isoformat(),
+                                questionId=questionId
                             ).model_dump())
 
                         elif part.inline_data:
@@ -80,20 +101,35 @@ async def websocket_endpoint(websocket: WebSocket):
                                 type="binary",
                                 mime_type=part.inline_data.mime_type,
                                 data=b64_data,
-                                documents=documents
+                                documents=documents,
+                                timestamp=datetime.now().isoformat(),
+                                questionId=questionId
                             ).model_dump())
                 
-                await websocket.send_json({
-                    "type": "end"
-                })
+                await websocket.send_json(LmmResponseDto(
+                                type="end",
+                                data="End of response",
+                                documents=documents,
+                                timestamp=datetime.now().isoformat(),
+                                questionId=questionId
+                            ).model_dump())
+
+                logger.info("request_completed")
+                clear_log_context()
 
             except LmmException as e:
+                logger.error("request_error: %s", e)
                 await websocket.send_json(ErrorDto(
-                    error_message=str(e)
+                    data=str(e),
+                    timestamp=datetime.now().isoformat()
                 ).model_dump())
             except Exception as e:
+                logger.error("request_error: %s", e)
+                clear_log_context()
+
                 await websocket.send_json(ErrorDto(
-                    error_message="Erro inesperado durante o processamento da resposta: " + str(e)
+                    data="Erro inesperado durante o processamento da resposta: " + str(e),
+                    timestamp=datetime.now().isoformat()
                 ).model_dump())
 
     except WebSocketDisconnect:

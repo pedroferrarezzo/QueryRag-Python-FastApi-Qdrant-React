@@ -14,8 +14,11 @@ class LmmResponseDto(BaseModel):
     mime_type: str | None = None
     """Tipo MIME do conteúdo, presente apenas para dados binários."""
 
-    timestamp: str = datetime.now().isoformat()
+    timestamp: str
     """Timestamp da resposta, no formato ISO 8601."""
+
+    questionId: str
+    """ID da pergunta associada à resposta."""
 
     documents: list[Document]
     """Documentos recuperados durante o RAG e utilizados pelo LMM para gerar a resposta."""
