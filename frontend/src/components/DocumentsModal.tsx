@@ -8,9 +8,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { FileText } from "lucide-react"
+import { FileText, Info } from "lucide-react"
 
 import type { Document } from "@/types/rag"
+import { DefaultTooltip } from "./DefaultTooltip"
 
 /** Props para o componente DocumentsModal */
 type DocumentsModalProps = {
@@ -32,8 +33,11 @@ export function DocumentsModal(props: DocumentsModalProps) {
       </DialogTrigger>
 
       <DialogContent className="max-w-2xl">
-        <DialogHeader>
+        <DialogHeader className="flex flex-row">
           <DialogTitle>Documentos Recuperados</DialogTitle>
+          <DefaultTooltip content="Utiliza um modelo de embeddings multimodal para recuperar documentos relevantes com base na distância de cosseno."> 
+              <Info className="w-4 h-4" />
+          </DefaultTooltip>
         </DialogHeader>
 
         <ScrollArea className="max-h-[400px] pr-4">
