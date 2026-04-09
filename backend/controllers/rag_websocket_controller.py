@@ -20,6 +20,8 @@ import magic
 
 from fastapi import APIRouter
 
+from utils.parse_utils import convert_webm_to_wav
+
 router = APIRouter()
 logger = logging.getLogger("app")
 
@@ -53,8 +55,21 @@ async def websocket_endpoint(websocket: WebSocket):
                     mime = magic.Magic(mime=True)
                     prompt_mime_type = mime.from_buffer(prompt_raw_bytes)
 
+                    if prompt_mime_type == "video/webm":
+                        try:
+                            prompt_raw_bytes = convert_webm_to_wav(prompt_raw_bytes)
+                            prompt_mime_type = "audio/wav"
+                        except Exception as e:
+                            logger.error("request_error: %s", e)
+                            clear_log_context()
+
+                            await websocket.send_json(ErrorDto(data="Erro na conversão de áudio Webm para Wav.", timestamp=datetime.now().isoformat()).model_dump())
+                            continue
+
             except Exception as e:
                 logger.error("request_error: %s", e)
+                clear_log_context()
+
                 await websocket.send_json(ErrorDto(data="Erro ao decodificar a mensagem.", timestamp=datetime.now().isoformat()).model_dump())
                 continue
 
@@ -119,6 +134,8 @@ async def websocket_endpoint(websocket: WebSocket):
 
             except LmmException as e:
                 logger.error("request_error: %s", e)
+                clear_log_context()
+
                 await websocket.send_json(ErrorDto(
                     data=str(e),
                     timestamp=datetime.now().isoformat()
