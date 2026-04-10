@@ -5,8 +5,8 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import type { Dispatch, SetStateAction, KeyboardEvent } from "react"
 import type { RagQuestion } from "../types/rag"
-import type { ServerConnectionStatus } from "@/types/server"
 import AudioRecorder from "./AudioRecorder"
+import { useAppContext } from "@/contexts/AppContext"
 
 /** Props para o componente QueryInput */
 type QueryInputProps = {
@@ -14,12 +14,13 @@ type QueryInputProps = {
   setValue: Dispatch<SetStateAction<string>>,
   setRagQuestions: Dispatch<SetStateAction<RagQuestion[]>>,
   className?: string,
-  connectionStatus: ServerConnectionStatus,
   chatInProgress: boolean
 }
 
 /** Componente para entrada de perguntas, com suporte a envio via Enter e visualização do status do servidor RAG */
 export default function QueryInput(props: QueryInputProps) {
+
+  const appContext = useAppContext();
 
   function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -54,10 +55,10 @@ export default function QueryInput(props: QueryInputProps) {
           focus-visible:outline-none
           focus-visible:border-input
         "
-        disabled={props.connectionStatus !== "connected" || props.chatInProgress}
+        disabled={appContext.ragServerConnected !== "connected" || props.chatInProgress}
       />
       <InputGroupAddon align="inline-end" className="absolute right-2 flex items-center gap-1">
-        <AudioRecorder onSend={handleAudioSend} disabled={props.connectionStatus !== "connected" || props.chatInProgress} />
+        <AudioRecorder onSend={handleAudioSend} disabled={appContext.ragServerConnected !== "connected" || props.chatInProgress} />
       </InputGroupAddon>
     </InputGroup>
   )

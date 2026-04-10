@@ -1,18 +1,17 @@
-import ThemeToggle from "./components/ThemeToggle";
-import queryRagLogo from './assets/query-reg-logo.png';
-import QueryInput from "./components/QueryInput";
+import QueryInput from "../components/QueryInput";
 import { useState, useRef, useEffect, useMemo } from "react";
-import QuestionCard from "./components/QuestionCard";
-import type { LmmResponse, RagQuestion } from "./types/rag";
-import AnswerCard from "./components/AnswerCard";
-import { configureHandleError, configureHandleMessage, createWebSocket, sendQuestion } from "./lib/websocket";
-import RagServerStatus from "./components/RagServerStatus";
-import type { ServerConnectionStatus } from "./types/server";
+import QuestionCard from "../components/QuestionCard";
+import type { LmmResponse, RagQuestion } from "../types/rag";
+import AnswerCard from "../components/AnswerCard";
+import { configureHandleError, configureHandleMessage, createWebSocket, sendQuestion } from "../lib/websocket";
+import Header from "@/components/Header";
+import { useAppContext } from "@/contexts/AppContext";
 
+/**Página Principal */
 export default function Home(){
+    const { setRagServerConnected } = useAppContext();
     const [question, setQuestion] = useState("");
     const [chatInProgress, setChatInProgress] = useState(false);
-    const [ragServerConnected, setRagServerConnected] = useState<ServerConnectionStatus>("disconnected");
     const [ragQuestions, setRagQuestions] = useState<RagQuestion[]>([]);
     const [lmmResponses, setLmmResponses] = useState<LmmResponse[]>([]);
     const ragConversationsScrollRef = useRef<HTMLDivElement>(null);
@@ -62,16 +61,8 @@ export default function Home(){
 
     return (
         <div className="flex flex-col items-center p-4 h-screen">
-            <header className="flex justify-between w-full items-center">
-                <img 
-                src={queryRagLogo} 
-                alt="Descrição" 
-                className="h-[clamp(55px,8vw,85px)] w-auto"
-                />
-                <RagServerStatus ragServerConnected={ragServerConnected} />
-                <ThemeToggle />
-            </header>
-
+            <Header />
+            
             <main className={`flex-grow flex flex-col ${ragQuestions.length > 0 ? 'justify-between' : 'justify-center'} w-full max-w-4xl overflow-hidden`}>
                 <div className="overflow-y-auto p-1 scrollbar-hide" ref={ragConversationsScrollRef}>
                     {ragQuestions.map((ragQuestion, index) => {
@@ -91,7 +82,7 @@ export default function Home(){
                 </div>
                 
                 <div className="mt-3">
-                    <QueryInput value={question} setValue={setQuestion} chatInProgress={chatInProgress} setRagQuestions={setRagQuestions} connectionStatus={ragServerConnected} className="shadow-lg"/>
+                    <QueryInput value={question} setValue={setQuestion} chatInProgress={chatInProgress} setRagQuestions={setRagQuestions} className="shadow-lg"/>
                 </div>
             </main>
 
