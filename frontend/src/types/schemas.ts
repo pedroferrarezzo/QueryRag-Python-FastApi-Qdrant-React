@@ -1,6 +1,15 @@
 import { z } from "zod";
 
 /**
+ * Esquema para resposta de erro.
+ */
+export const ErrorSchema = z.object({
+  data: z.string(),
+  timestamp: z.coerce.date(),
+  type: z.literal("error"),
+});
+
+/**
  * Metadados de um documento recuperado durante o RAG.
  */
 export const MetadataSchema = z.object({

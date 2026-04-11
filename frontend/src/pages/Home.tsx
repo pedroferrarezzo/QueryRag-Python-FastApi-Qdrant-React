@@ -6,6 +6,7 @@ import AnswerCard from "../components/AnswerCard";
 import { configureHandleError, configureHandleMessage, createWebSocket, sendQuestion } from "../lib/websocket";
 import Header from "@/components/Header";
 import { useAppContext } from "@/contexts/AppContext";
+import { toast } from "sonner";
 
 /**Página Principal */
 export default function Home(){
@@ -21,12 +22,53 @@ export default function Home(){
     }, [ragQuestions]);
 
     useEffect(() => {
-        ws.current = createWebSocket({ setRagServerConnected });
+        ws.current = createWebSocket({ 
+            setRagServerConnected, 
+            onOpenCallback: () => {
+                toast.info("Conexão estabelecida com o servidor de RAG");
+            },
+            onCloseCallback: (event) => {
+                const { code, wasClean } = event;
+
+                const codeMessages: Record<number, string> = {
+                    1000: "Conexão encerrada com o servidor de RAG",
+                    1001: "Servidor de RAG indisponível ou navegação interrompida",
+                    1002: "Erro de protocolo durante conexão com o servidor de RAG",
+                    1003: "Tipo de dado não suportado pelo servidor de RAG",
+                    1006: "Conexão interrompida com o servidor de RAG",
+                    1007: "Dados inválidos recebidos do servidor de RAG",
+                    1008: "Violação de política do servidor de RAG",
+                    1009: "Mensagem muito grande recebida do servidor de RAG",
+                    1011: "Erro interno do servidor de RAG",
+                };
+
+                if (codeMessages[code]) {
+                    toast.info(codeMessages[code]);
+                    return;
+                }
+
+                if (!wasClean) {
+                    toast.info(`Conexão encerrada inesperadamente com o servidor de RAG: (${code})`);
+                    return;
+                }
+
+                toast.info("Conexão encerrada inesperadamente com o servidor de RAG");
+            },
+            errorCallback: (err) => {
+                toast.error(`Erro inesperado durante estabelecimento da conexão com o servidor de RAG: ${err}`);
+            }
+        });
 
         configureHandleMessage({ 
             ws: ws.current, 
             setLmmResponses: setLmmResponses,
-            setChatInProgress 
+            setChatInProgress,
+            ragServerErrorCallback: (errorMessage) => {
+                toast.info(`Erro durante processamento da mensagem do servidor de RAG: ${errorMessage}`);
+            },
+            errorCallback: (err) => {
+                toast.error(`Erro inesperado durante processamento da mensagem do servidor de RAG: ${err}`);
+            }
         });
         configureHandleError({ ws: ws.current, setChatInProgress });
 
@@ -50,7 +92,10 @@ export default function Home(){
                 await sendQuestion({
                     ws: ws.current, 
                     lastQuestion: lastQuestion, 
-                    setChatInProgress
+                    setChatInProgress,
+                    errorCallback: (err) => {
+                        toast.error(`Erro inesperado durante envio da pergunta para o servidor de RAG: ${err}`);
+                    }
                 });
             }
         };

@@ -21,8 +21,8 @@ export function Clipboard({ value, className }: ClipboardProps) {
       toast.success("Copiado para a área de transferência")
 
       setTimeout(() => setCopied(false), 1500)
-    } catch {
-      toast.error("Erro ao copiar")
+    } catch(err) {
+      toast.error(`Erro inesperado ao copiar: ${err}`)
     }
   }
 

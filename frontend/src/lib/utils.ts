@@ -1,3 +1,4 @@
+import { ErrorSchema } from "@/types/schemas";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -22,3 +23,18 @@ export function blobToBase64(blob: Blob): Promise<string> {
   });
 }
 
+/** Trata a resposta de APIs */
+export async function handleHttpResponse(response: Response): Promise<void> { 
+    if (!response.ok) {
+        let errorMessage;
+        try {
+            const error = ErrorSchema.parse(await response.json());
+            errorMessage = error.data;
+        }
+        catch(err) {
+            errorMessage = "Erro desconhecido durante a manipulação da resposta de erro.";
+        }
+
+        throw new Error(errorMessage);
+    }
+}

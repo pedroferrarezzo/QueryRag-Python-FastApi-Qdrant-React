@@ -5,6 +5,8 @@ import type { ServerConnectionStatus } from "../types/server";
 type AppContextType = {
     ragServerConnected: ServerConnectionStatus;
     setRagServerConnected: React.Dispatch<React.SetStateAction<ServerConnectionStatus>>;
+    isLoading: boolean;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 /**Contexto da Aplicação */
@@ -13,11 +15,14 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 /**Provedor de Contexto da Aplicação */
 export function AppContextProvider({ children }: { children: React.ReactNode }) {
   const [ragServerConnected, setRagServerConnected] = useState<ServerConnectionStatus>("disconnected");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Memoiza os valores do contexto para evitar re-renderizações desnecessárias nos componentes consumidores
   const values = useMemo(() => ({
         ragServerConnected,
-        setRagServerConnected
+        setRagServerConnected,
+        isLoading,
+        setIsLoading
     }), [ragServerConnected]);
 
   return (

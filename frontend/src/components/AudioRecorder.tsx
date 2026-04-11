@@ -60,7 +60,7 @@ export default function AudioRecorder(props: AudioRecorderProps) {
           break;
 
         default:
-          toast.error("Erro desconhecido:", error);
+          toast.error(`Erro desconhecido: ${error?.message || error?.name || error}`);
       }
     }
   }

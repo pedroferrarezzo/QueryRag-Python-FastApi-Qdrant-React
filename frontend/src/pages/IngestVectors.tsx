@@ -1,3 +1,4 @@
+import FileUpload from "@/components/FileUpload";
 import Header from "@/components/Header";
 
 /**Página para Ingestão de Vetores */
@@ -7,6 +8,7 @@ export default function IngestVectors() {
           <Header />
           
           <main className={`flex-grow flex flex-col justify-center w-full max-w-4xl`}>
+            <FileUpload />
           </main>
 
     </div>

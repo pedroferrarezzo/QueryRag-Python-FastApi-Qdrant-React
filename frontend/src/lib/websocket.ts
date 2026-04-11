@@ -2,7 +2,6 @@ import {env} from "../config/env"
 import { type Dispatch, type SetStateAction } from "react";
 import { LmmResponseSchema } from "@/types/schemas";
 import type { ServerConnectionStatus } from "@/types/server";
-import { toast } from "sonner";
 import type { LmmResponse, RagQuestion } from "@/types/rag";
 import { blobToBase64 } from "./utils";
 
@@ -11,6 +10,9 @@ import { blobToBase64 } from "./utils";
  */
 type createWebSocketProps = {
     setRagServerConnected: Dispatch<SetStateAction<ServerConnectionStatus>>;
+    onOpenCallback?: () => void;
+    onCloseCallback?: (event: CloseEvent) => void;
+    errorCallback?: (error: any) => void;
 }
 
 /**
@@ -20,6 +22,8 @@ type configureHandleMessageProps = {
     ws: WebSocket;
     setLmmResponses: Dispatch<SetStateAction<LmmResponse[]>>;
     setChatInProgress: Dispatch<SetStateAction<boolean>>;
+    errorCallback?: (error: any) => void;
+    ragServerErrorCallback?: (errorMessage: string) => void;
 }
 
 /**
@@ -36,6 +40,7 @@ type sendQuestionProps = {
     ws: WebSocket | null;
     lastQuestion: RagQuestion;
     setChatInProgress: Dispatch<SetStateAction<boolean>>;
+    errorCallback?: (error: any) => void;
 }
 
 /**
@@ -50,19 +55,25 @@ export function createWebSocket(props: createWebSocketProps): WebSocket {
 
         ws.onopen = () => {
             props.setRagServerConnected("connected");
-            toast.info("Conexão WebSocket estabelecida");
+            if (props.onOpenCallback) {
+                props.onOpenCallback();
+            }
         };
 
-        ws.onclose = () => {
+        ws.onclose = (event) => {
             props.setRagServerConnected("disconnected");
-            toast.info("Conexão WebSocket encerrada");
+            if (props.onCloseCallback) {
+                props.onCloseCallback(event);
+            }
         };
 
         return ws;
     }
     catch(err) {
         props.setRagServerConnected("disconnected");
-        toast.error("WebSocket Creating Error: " + err);
+        if (props.errorCallback) {
+            props.errorCallback(err);
+        }
         throw err;
     }
 } 
@@ -77,7 +88,9 @@ export function configureHandleMessage(props: configureHandleMessageProps) {
 
         if (lmmResponse && lmmResponse.type === "error") {
             props.setChatInProgress(false);
-            toast.error("RAG Server Error: " + lmmResponse.data);
+            if (props.ragServerErrorCallback) {
+                props.ragServerErrorCallback(lmmResponse.data);
+            }
             return;
         }
 
@@ -107,7 +120,9 @@ export function configureHandleMessage(props: configureHandleMessageProps) {
       }
       catch(err) {
         props.setChatInProgress(false);
-        toast.error("WebSocket Processing Error: " + err);
+        if (props.errorCallback) {
+            props.errorCallback(err);
+        }
       }
   };
 
@@ -115,9 +130,8 @@ export function configureHandleMessage(props: configureHandleMessageProps) {
 
 /** Configura o handler para erros de WebSocket */
 export function configureHandleError(props: configureHandleErrorProps) {
-    props.ws.onerror = (error) => {
+    props.ws.onerror = () => {
         props.setChatInProgress(false);
-        toast.error("WebSocket Error: " + error);
     };
 }
 
@@ -136,6 +150,8 @@ export async function sendQuestion(props: sendQuestionProps) {
     }
     catch(err) {
         props.setChatInProgress(false);
-        toast.error("WebSocket Sending Error: " + err);
+        if (props.errorCallback) {
+            props.errorCallback(err);
+        }
     }
 }
