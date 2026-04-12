@@ -1,3 +1,4 @@
+from docling.exceptions import ConversionError
 from qdrant_client.models import datetime
 
 from exceptions import LmmException, InvalidValueException
@@ -16,4 +17,10 @@ async def invalid_value_handler(request: Request, exc: InvalidValueException):
     return JSONResponse(
         status_code=400,
         content=ErrorDto(data=str(exc), timestamp=datetime.now().isoformat()).model_dump()
+    )
+
+async def docling_format_handler(request: Request, exc: ConversionError):
+    return JSONResponse(
+        status_code=400,
+        content=ErrorDto(data="Formato de arquivo inválido", timestamp=datetime.now().isoformat()).model_dump()
     )

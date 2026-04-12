@@ -17,6 +17,7 @@ MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
 MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
 MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME")
 MINIO_SECURE = os.getenv("MINIO_SECURE")
+QUERY_RAG_FRONTEND_URL = os.getenv("QUERY_RAG_FRONTEND_URL")
 
 if not GEMINI_API_KEY:
     raise StartupException("GEMINI_API_KEY não definida")
@@ -38,5 +39,7 @@ if not MINIO_BUCKET_NAME:
     raise StartupException("MINIO_BUCKET_NAME não definida")
 if not MINIO_SECURE:
     raise StartupException("MINIO_SECURE não definida")
+if not QUERY_RAG_FRONTEND_URL:
+    raise StartupException("QUERY_RAG_FRONTEND_URL não definida")
 
 MINIO_SECURE = MINIO_SECURE.lower() == "true"
