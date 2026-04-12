@@ -1,7 +1,15 @@
 import { ErrorSchema } from "@/types/schemas";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { type ZodType  } from "zod";
 
+/** Props para manipulação de respostas HTTP */
+type handleHttpResponseProps<T> = {
+    response: Response;
+    schema: ZodType<T>
+}
+
+/** Função para combinar classes CSS de forma eficiente */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -24,17 +32,25 @@ export function blobToBase64(blob: Blob): Promise<string> {
 }
 
 /** Trata a resposta de APIs */
-export async function handleHttpResponse(response: Response): Promise<void> { 
+export async function handleHttpResponse<T>({ response, schema }: handleHttpResponseProps<T>): Promise<T> {
+    const result = await response.json();
     if (!response.ok) {
         let errorMessage;
         try {
-            const error = ErrorSchema.parse(await response.json());
+            const error = ErrorSchema.parse(result);
             errorMessage = error.data;
         }
         catch(err) {
-            errorMessage = "Erro desconhecido durante a manipulação da resposta de erro.";
+            errorMessage = "Erro desconhecido durante a manipulação da resposta de erro";
         }
 
         throw new Error(errorMessage);
+    }
+
+    try {
+      return schema.parse(result);
+    }
+    catch(err) {
+        throw new Error("Erro desconhecido durante a manipulação da resposta de sucesso");
     }
 }

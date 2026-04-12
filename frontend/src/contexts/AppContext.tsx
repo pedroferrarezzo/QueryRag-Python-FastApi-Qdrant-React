@@ -23,7 +23,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
         setRagServerConnected,
         isLoading,
         setIsLoading
-    }), [ragServerConnected]);
+    }), [ragServerConnected, isLoading]);
 
   return (
     <AppContext.Provider value={values}>

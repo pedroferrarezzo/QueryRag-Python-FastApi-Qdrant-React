@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { DocumentSchema, LmmResponseBaseSchema, LmmResponseSchema, MetadataSchema } from "./schemas";
+import type { DocumentSchema, IngestResultSchema, LmmResponseBaseSchema, LmmResponseSchema, MetadataSchema } from "./schemas";
 
 /**
  * Representa uma pergunta de RAG (Retrieval-Augmented Generation).
@@ -34,3 +34,6 @@ export type LmmBase = z.infer<typeof LmmResponseBaseSchema>;
  * Resposta do LMM.
  */
 export type LmmResponse = z.infer<typeof LmmResponseSchema>;
+
+/** Esquema para resposta de ingestão de vetores */
+export type IngestResult = z.infer<typeof IngestResultSchema>;

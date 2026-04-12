@@ -76,3 +76,8 @@ export const LmmResponseSchema = z.discriminatedUnion("type", [
   LmmSuccessResponseSchema,
   LmmErrorResponseSchema,
 ]);
+
+/** Esquema para resposta de ingestão de vetores */
+export const IngestResultSchema = z.object({
+  chunks_stored: z.number()
+});
