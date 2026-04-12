@@ -14,16 +14,17 @@ export default function Header(props: HeaderProps){
     const { ragServerConnected } = useAppContext();
     return (
         <header className={`flex justify-between w-full items-center ${props.className || ''}`}>
-            <div className="flex items-center gap-1">
-                <NavigationMenu />
+            <NavigationMenu />
+
+            <div className="flex flex-col items-center gap-1">
                 <img 
                     src={queryRagLogo} 
                     alt="Descrição" 
                     className="h-[clamp(55px,8vw,85px)] w-auto"
                 />
+                <RagServerStatus ragServerConnected={ragServerConnected} />
             </div>
             
-            <RagServerStatus ragServerConnected={ragServerConnected} />
             <ThemeToggle />
         </header>
     );
