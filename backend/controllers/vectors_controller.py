@@ -8,7 +8,7 @@ from typing import Optional
 from fastapi import UploadFile, File, Form
 from fastapi.responses import JSONResponse
 
-from dto import VectorDto, RagQueryDto, IngestResultDto
+from dto import VectorDto, IngestResultDto
 
 from exceptions import InvalidValueException
 from service.embedding_service import embed_data, embed_datas
@@ -101,12 +101,12 @@ async def query(prompt: Optional[str] = Form(None), file: Optional[UploadFile] =
     else:
         query_vector = await embed_data(prompt)
 
-    documents = await search_vector(query_vector, 5)
+    documents = await search_vector(query_vector, 20)
 
     put_log_context("user_query", prompt)
     put_log_context("documents_returned_size", len(documents))
 
     return JSONResponse(
         status_code=200,
-        content=RagQueryDto(query=prompt if prompt else file.filename, documents=documents).model_dump()
+        content=[doc.model_dump() for doc in documents]
     )
