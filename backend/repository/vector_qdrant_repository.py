@@ -48,7 +48,11 @@ async def add_vector(vector_dto: VectorDto):
                     "type": vector_dto.type,
                     "chunk": vector_dto.chunk,
                     "source": vector_dto.source,
-                    "object_storage_key": vector_dto.object_storage_key
+                    "object_storage": {
+                        "key": vector_dto.object_storage.key,
+                        "url": vector_dto.object_storage.url,
+                        "include_in_prompt": vector_dto.object_storage.include_in_prompt
+                    }
                 },
             )
         ],
@@ -71,7 +75,11 @@ async def add_vectors(vector_dtos: list[VectorDto]):
                     "type": vector_dto.type,
                     "chunk": vector_dto.chunk,
                     "source": vector_dto.source,
-                    "object_storage_key": vector_dto.object_storage_key
+                    "object_storage": {
+                        "key": vector_dto.object_storage.key,
+                        "url": vector_dto.object_storage.url,
+                        "include_in_prompt": vector_dto.object_storage.include_in_prompt
+                    }
                 },
             )
         )
@@ -108,7 +116,7 @@ async def search_vector(vector: list[float], k: int = 5) -> list[Document]:
                     type=payload.get("type"),
                     chunk=payload.get("chunk"),
                     source=payload.get("source"),
-                    object_storage_key=payload.get("object_storage_key")
+                    object_storage=payload.get("object_storage")
                 ),
                 score=float(result.score),
                 rerank_score=None  # Reranking pode ser implementado posteriormente

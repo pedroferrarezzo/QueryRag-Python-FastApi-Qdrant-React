@@ -1,4 +1,5 @@
 import { type Document } from "../types/rag";
+import { ExternalLink } from 'lucide-react';
 
 /** Props para o componente Document */
 type DocumentProps = {
@@ -12,10 +13,10 @@ export default function DocumentCard({key, doc}: DocumentProps) {
         <div key={key} className="border rounded-lg p-3 text-sm space-y-2">
             <div className="flex justify-between">
                 <span className="font-medium">
-                {doc.metadata.source}
+                    {doc.metadata.source}
                 </span>
                 <span className="text-muted-foreground">
-                score: {doc.score.toFixed(4)}
+                    score: {doc.score.toFixed(4)}
                 </span>
             </div>
 
@@ -31,10 +32,17 @@ export default function DocumentCard({key, doc}: DocumentProps) {
                 </div>
             )}
 
-            {doc.metadata.chunk && (
+            {doc.metadata.object_storage.url && (
                 <div className="text-xs text-muted-foreground">
-                chunk: {doc.metadata.chunk}
+                    <a href={doc.metadata.object_storage.url} target="_blank" rel="noopener noreferrer">
+                        Ir para Object Storage
+                        <ExternalLink size={12} className="ml-2 inline" />
+                    </a>
                 </div>
+            )}
+
+            {doc.metadata.chunk && (
+                <div className="text-xs text-muted-foreground">chunk: {doc.metadata.chunk}</div>
             )}
         </div>
     )

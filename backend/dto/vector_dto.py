@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from .object_storage_dto import ObjectStorageDto
 
 class VectorDto(BaseModel):
     """Classe para representar um conteúdo vetorizado via embedding."""
@@ -15,6 +16,6 @@ class VectorDto(BaseModel):
     source: str
     """fonte do conteúdo (ex: nome do arquivo, URL, etc)."""
 
-    object_storage_key: str | None = None
-    """chave de armazenamento em object storage, se aplicável."""
+    object_storage: ObjectStorageDto
+    """Informações de armazenamento do conteúdo original."""
         

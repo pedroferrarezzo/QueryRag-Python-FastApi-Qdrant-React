@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 
 from dto import VectorDto, IngestResultDto
 
+from dto.object_storage_dto import ObjectStorageDto
 from exceptions import InvalidValueException
 from service.embedding_service import embed_data, embed_datas
 from service.docling_service import extract_text
@@ -33,18 +34,17 @@ async def ingest(
     
     ingest_result: IngestResultDto = IngestResultDto(chunks_stored=0)
     fileBytes = await file.read()
+    object_storage = await upload_file(fileBytes, file.filename)
 
     if "image" in file.content_type or "video" in file.content_type or "audio" in file.content_type:
         vector = await embed_data(fileBytes, file.content_type)
-
-        object_storage_key = await upload_file(fileBytes, file.filename)
-        
+  
         await add_vector(
             VectorDto(
                 vector=vector,
                 type=file.content_type,
                 source=file.filename,
-                object_storage_key=object_storage_key
+                object_storage=ObjectStorageDto(key=object_storage["key"], url=object_storage["url"], include_in_prompt=True)
             )
         )
 
@@ -71,7 +71,8 @@ async def ingest(
                 vector=vector,
                 type=file.content_type,
                 chunk=chunk,
-                source=file.filename
+                source=file.filename,
+                object_storage=ObjectStorageDto(key=object_storage["key"], url=object_storage["url"], include_in_prompt=False)
             ) for chunk, vector in zip(chunks, vectors)]
 
             await add_vectors(vector_dtos)

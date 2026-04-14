@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from .object_storage import ObjectStorage
+
 class Metadata(BaseModel):
     """Classe para armazenar metadados de um documento recuperado durante o RAG."""
 
@@ -12,5 +14,5 @@ class Metadata(BaseModel):
     source: str
     """Fonte do documento."""
 
-    object_storage_key: str | None
-    """chave de armazenamento em object storage, se aplicável."""
+    object_storage: ObjectStorage
+    """Informações de armazenamento em object storage."""

@@ -52,7 +52,7 @@ export default function SearchVectors() {
                   <QueryInput value={question} setValue={setQuestion} chatInProgress={isLoading} setRagQuestion={setRagQuestion} className="shadow-lg"/>
               </div>
 
-              <div className={`overflow-y-auto p-1 scrollbar-hide gap-4 flex flex-col ${isLoading ? 'flex-grow justify-center' : ''}`}>
+              <div className={`overflow-y-auto p-1 scrollbar-hide gap-2 flex flex-col ${documents.length > 0 ? 'flex-grow mt-4' : ''} ${isLoading ? 'flex-grow justify-center' : ''}`}>
                 {isLoading 
                   ? <SpinnerLoading text="Pesquisa de vetores em andamento. Em breve você verá os resultados!" />
                   : documents.map((doc, index) => (

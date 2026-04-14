@@ -13,6 +13,7 @@ QDRANT_PORT = os.getenv("QDRANT_PORT")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION")
 MINIO_HOST = os.getenv("MINIO_HOST")
 MINIO_PORT = os.getenv("MINIO_PORT")
+MINIO_CONSOLE_PORT = os.getenv("MINIO_CONSOLE_PORT")
 MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
 MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
 MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME")
@@ -31,6 +32,8 @@ if not MINIO_HOST:
     raise StartupException("MINIO_HOST não definida")
 if not MINIO_PORT:
     raise StartupException("MINIO_PORT não definida")
+if not MINIO_CONSOLE_PORT:
+    raise StartupException("MINIO_CONSOLE_PORT não definida")
 if not MINIO_ACCESS_KEY:
     raise StartupException("MINIO_ACCESS_KEY não definida")
 if not MINIO_SECRET_KEY:

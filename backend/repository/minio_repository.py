@@ -1,7 +1,9 @@
+
+
 from miniopy_async import Minio
 from io import BytesIO
 import uuid
-from config.env import MINIO_HOST, MINIO_PORT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_SECURE, MINIO_BUCKET_NAME
+from config.env import MINIO_CONSOLE_PORT, MINIO_HOST, MINIO_PORT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_SECURE, MINIO_BUCKET_NAME
 from exceptions.invalid_value_exception import InvalidValueException
 
 client = Minio(
@@ -11,13 +13,16 @@ client = Minio(
     secure=MINIO_SECURE,
 )
 
+scheme = "https" if MINIO_SECURE else "http"
+base_console_url = f"{scheme}://{MINIO_HOST}:{MINIO_CONSOLE_PORT}"
+
 async def initialize_minio():
     """Inicializa o MinIO, criando o bucket se ele não existir."""
     
     if not await client.bucket_exists(MINIO_BUCKET_NAME):
         await client.make_bucket(MINIO_BUCKET_NAME)
 
-async def upload_file(file_content: bytes, file_name: str) -> str:
+async def upload_file(file_content: bytes, file_name: str) -> dict[str, str]:
     """Realiza o upload de um arquivo para o MinIO e retorna a chave do arquivo."""
 
     if not file_content or not file_name:
@@ -33,7 +38,9 @@ async def upload_file(file_content: bytes, file_name: str) -> str:
         length=len(file_content),
     )
 
-    return file_key
+    object_console_url = f"{base_console_url}/browser/{MINIO_BUCKET_NAME}/{file_key}"
+
+    return {"key": file_key, "url": object_console_url}
 
 async def download_file(file_key: str) -> bytes:
     """Realiza o download de um arquivo do MinIO usando a chave do arquivo e retorna o conteúdo do arquivo."""
