@@ -8,8 +8,6 @@ import { toast } from 'sonner';
 type AppContextType = {
     ragServerConnected: ServerConnectionStatus;
     setRagServerConnected: React.Dispatch<React.SetStateAction<ServerConnectionStatus>>;
-    isLoading: boolean;
-    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
     ws: React.RefObject<WebSocket | null>;
 }
 
@@ -19,17 +17,14 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 /**Provedor de Contexto da Aplicação */
 export function AppContextProvider({ children }: { children: React.ReactNode }) {
   const [ragServerConnected, setRagServerConnected] = useState<ServerConnectionStatus>("disconnected");
-  const [isLoading, setIsLoading] = useState(false);
   const ws = useRef<WebSocket | null>(null);
 
   // Memoiza os valores do contexto para evitar re-renderizações desnecessárias nos componentes consumidores
   const values = useMemo(() => ({
         ragServerConnected,
         setRagServerConnected,
-        isLoading,
-        setIsLoading,
         ws
-    }), [ragServerConnected, isLoading]);
+    }), [ragServerConnected]);
 
   useEffect(() => {
     ws.current = createWebSocket({ 

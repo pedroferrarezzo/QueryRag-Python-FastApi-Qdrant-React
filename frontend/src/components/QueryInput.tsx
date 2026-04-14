@@ -12,7 +12,8 @@ import { useAppContext } from "@/contexts/AppContext"
 type QueryInputProps = {
   value: string,
   setValue: Dispatch<SetStateAction<string>>,
-  setRagQuestions: Dispatch<SetStateAction<RagQuestion[]>>,
+  setRagQuestions?: Dispatch<SetStateAction<RagQuestion[]>>,
+  setRagQuestion?: Dispatch<SetStateAction<RagQuestion | undefined>>,
   className?: string,
   chatInProgress: boolean
 }
@@ -28,13 +29,15 @@ export default function QueryInput(props: QueryInputProps) {
       
       if (props.value.trim() === "") return
 
-      props.setRagQuestions((prev) => [...prev, { id: crypto.randomUUID(), question: props.value, timestamp: new Date() }]);
+      props.setRagQuestions?.((prev) => [...prev, { id: crypto.randomUUID(), question: props.value, timestamp: new Date() }]);
+      props.setRagQuestion?.({ id: crypto.randomUUID(), question: props.value, timestamp: new Date() });
       props.setValue("");
     }
   }
 
   function handleAudioSend(blob: Blob) {
-      props.setRagQuestions((prev) => [...prev, { id: crypto.randomUUID(), question: blob, timestamp: new Date() }]);
+      props.setRagQuestions?.((prev) => [...prev, { id: crypto.randomUUID(), question: blob, timestamp: new Date() }]);
+      props.setRagQuestion?.({ id: crypto.randomUUID(), question: blob, timestamp: new Date() });
       props.setValue("");
   }
 

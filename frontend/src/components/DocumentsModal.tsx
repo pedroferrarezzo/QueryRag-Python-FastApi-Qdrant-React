@@ -12,6 +12,7 @@ import { FileText, Info } from "lucide-react"
 
 import type { Document } from "@/types/rag"
 import { DefaultTooltip } from "./DefaultTooltip"
+import DocumentCard from "./DocumentCard"
 
 /** Props para o componente DocumentsModal */
 type DocumentsModalProps = {
@@ -43,37 +44,7 @@ export function DocumentsModal(props: DocumentsModalProps) {
         <ScrollArea className="max-h-[400px] pr-4">
           <div className="space-y-4">
             {props.documents.map((doc, index) => (
-              <div
-                key={index}
-                className="border rounded-lg p-3 text-sm space-y-2"
-              >
-                <div className="flex justify-between">
-                  <span className="font-medium">
-                    {doc.metadata.source}
-                  </span>
-                  <span className="text-muted-foreground">
-                    score: {doc.score.toFixed(4)}
-                  </span>
-                </div>
-
-                {doc.rerank_score != null && (
-                  <div className="text-muted-foreground text-xs">
-                    rerank: {doc.rerank_score.toFixed(4)}
-                  </div>
-                )}
-
-                {doc.metadata.type && (
-                  <div className="text-xs">
-                    tipo: {doc.metadata.type}
-                  </div>
-                )}
-
-                {doc.metadata.chunk && (
-                  <div className="text-xs text-muted-foreground">
-                    chunk: {doc.metadata.chunk}
-                  </div>
-                )}
-              </div>
+              <DocumentCard key={index} doc={doc} />
             ))}
           </div>
         </ScrollArea>

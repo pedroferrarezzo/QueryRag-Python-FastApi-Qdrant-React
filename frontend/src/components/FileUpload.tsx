@@ -7,10 +7,16 @@ import { useAppContext } from "@/contexts/AppContext"
 import { toast } from "sonner"
 import { ingestVectors } from "@/lib/api"
 
+/** Props para o componente de Upload de Arquivo */
+type FileUploadProps = {
+    isLoading: boolean;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 /** Componente de Upload de Arquivo */
-export default function FileUpload() {
+export default function FileUpload({ isLoading, setIsLoading }: FileUploadProps) {
   const [file, setFile] = useState<File | null>(null);
-  const {isLoading, setIsLoading } = useAppContext();
+  const {ragServerConnected } = useAppContext();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0]
@@ -46,7 +52,7 @@ export default function FileUpload() {
     <Card className="w-full max-w-md">
       <CardContent className="flex flex-col gap-4 p-4" aria-description="Upload de Arquivos">
         <label className="cursor-pointer flex flex-col gap-2">
-          <span className="px-4 py-2 bg-gray-200 rounded text-center">
+          <span className="px-4 py-2 bg-gray-200 rounded text-center text-black">
             {file?.name ? "Arquivo Selecionado" : "Selecionar um arquivo"}
           </span>
 
@@ -69,7 +75,7 @@ export default function FileUpload() {
 
         <Button
           onClick={handleUpload}
-          disabled={!file || isLoading}
+          disabled={!file || isLoading || ragServerConnected !== "connected"}
           className="flex items-center gap-2"
         >
           <Upload className="h-4 w-4" />
