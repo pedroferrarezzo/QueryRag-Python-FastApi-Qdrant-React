@@ -2,8 +2,7 @@ from google import genai
 from google.genai import types
 from typing import List, Union
 from config.env import GEMINI_API_KEY
-from exceptions.invalid_value_exception import InvalidValueException
-from exceptions import LmmException
+from exceptions import InvalidValueException, LmmException
 
 client = genai.Client(api_key=GEMINI_API_KEY)
 MODEL_ID = "gemini-embedding-2-preview"

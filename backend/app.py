@@ -1,3 +1,4 @@
+from utils.cors_utils import get_cors_origins
 from docling.exceptions import ConversionError
 from fastapi import FastAPI
 
@@ -19,7 +20,7 @@ app.include_router(websocket_router)
 app.middleware("http")(log_context_middleware)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[QUERY_RAG_FRONTEND_URL],
+    allow_origins=get_cors_origins(QUERY_RAG_FRONTEND_URL),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

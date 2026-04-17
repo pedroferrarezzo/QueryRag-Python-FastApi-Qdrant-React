@@ -1,6 +1,6 @@
 from docling.document_converter import DocumentConverter
 
-from exceptions.invalid_value_exception import InvalidValueException
+from exceptions import InvalidValueException
 
 converter = DocumentConverter()
 

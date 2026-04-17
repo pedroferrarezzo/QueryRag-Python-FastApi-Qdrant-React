@@ -11,4 +11,7 @@ websockets
 google.genai
 qdrant_client
 miniopy-async
-python-magic-bin
+python-magic-bin; sys_platform == 'win32'
+python-magic; sys_platform != 'win32'
+static-ffmpeg; sys_platform != 'win32'
+pydub; sys_platform != 'win32'

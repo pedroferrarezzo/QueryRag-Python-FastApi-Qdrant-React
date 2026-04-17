@@ -4,7 +4,7 @@ from miniopy_async import Minio
 from io import BytesIO
 import uuid
 from config.env import MINIO_CONSOLE_PORT, MINIO_HOST, MINIO_PORT, MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_SECURE, MINIO_BUCKET_NAME
-from exceptions.invalid_value_exception import InvalidValueException
+from exceptions import InvalidValueException
 
 client = Minio(
     endpoint=f"{MINIO_HOST}:{MINIO_PORT}",

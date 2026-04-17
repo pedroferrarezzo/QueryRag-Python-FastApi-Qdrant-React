@@ -3,7 +3,7 @@ import os
 
 from dotenv import load_dotenv
 
-from exceptions.startup_exception import StartupException
+from exceptions import StartupException
 
 load_dotenv()
 

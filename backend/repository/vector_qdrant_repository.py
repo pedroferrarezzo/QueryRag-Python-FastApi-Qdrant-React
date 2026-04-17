@@ -5,7 +5,7 @@ from qdrant_client import AsyncQdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 
 from dto.vector_dto import VectorDto
-from exceptions.invalid_value_exception import InvalidValueException
+from exceptions import InvalidValueException
 from model import Document, Metadata
 
 from config.env import QDRANT_HOST, QDRANT_PORT, QDRANT_COLLECTION
