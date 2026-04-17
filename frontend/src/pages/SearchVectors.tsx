@@ -25,7 +25,6 @@ export default function SearchVectors() {
 
               if (searchResult.length === 0) {
                   toast.info("Nenhum documento encontrado para a pergunta fornecida. Insira vetores antes de realizar a pesquisa!");
-                  setRagQuestion(undefined);
                   return;
               }
 
@@ -47,7 +46,7 @@ export default function SearchVectors() {
     <div className="flex flex-col items-center p-4 h-screen">
           <Header />
           
-          <main className={`flex-grow flex flex-col ${ragQuestion ? 'justify-between' : 'justify-center'} w-full max-w-4xl overflow-hidden`}>
+          <main className={`flex-grow flex flex-col ${documents.length > 0 ? 'justify-between' : 'justify-center'} w-full max-w-4xl overflow-hidden`}>
               <div className="mt-3">
                   <QueryInput value={question} setValue={setQuestion} chatInProgress={isLoading} setRagQuestion={setRagQuestion} className="shadow-lg"/>
               </div>

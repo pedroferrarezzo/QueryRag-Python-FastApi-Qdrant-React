@@ -1,0 +1,2 @@
+VITE_WS_CHAT_ENDPOINT=ws://localhost:8000/rag/chat
+VITE_API_ENDPOINT=http://localhost:8000
