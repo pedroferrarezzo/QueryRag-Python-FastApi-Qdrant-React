@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 /**Página Principal */
 export default function Home(){
-    const { ws } = useAppContext();
+    const { ws, ragServerConnected } = useAppContext();
     const [question, setQuestion] = useState("");
     const [chatInProgress, setChatInProgress] = useState(false);
     const [ragQuestions, setRagQuestions] = useState<RagQuestion[]>([]);
@@ -42,7 +42,7 @@ export default function Home(){
                 ws.current.onerror = null;
             }
         }
-    }, [])
+    }, [ragServerConnected])
 
     useEffect(() => {
         if (ragConversationsScrollRef.current) {
