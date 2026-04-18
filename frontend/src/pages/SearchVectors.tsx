@@ -7,6 +7,8 @@ import DocumentCard from "@/components/DocumentCard";
 import { searchVectors } from "@/lib/api";
 import { toast } from "sonner";
 import SpinnerLoading from "@/components/SpinnerLoading";
+import { DefaultTooltip } from "@/components/DefaultTooltip";
+import { Info } from "lucide-react";
 
 /**Página para Pesquisa de Vetores */
 export default function SearchVectors() {
@@ -47,8 +49,13 @@ export default function SearchVectors() {
           <Header />
           
           <main className={`flex-grow flex flex-col ${documents.length > 0 ? 'justify-between' : 'justify-center'} w-full max-w-4xl overflow-hidden`}>
-              <div className="mt-3">
+              <div className="mt-3 flex flex-row justify-center items-center gap-2">
                   <QueryInput value={question} setValue={setQuestion} chatInProgress={isLoading} setRagQuestion={setRagQuestion} className="shadow-lg"/>
+                  {documents.length > 0 && (
+                    <DefaultTooltip content="Utiliza um modelo de embeddings multimodal para recuperar documentos relevantes com base na distância de cosseno."> 
+                        <Info className="w-6 h-6" />
+                    </DefaultTooltip>
+                  )}
               </div>
 
               <div className={`overflow-y-auto p-1 scrollbar-hide gap-2 flex flex-col ${documents.length > 0 ? 'flex-grow mt-4' : ''} ${isLoading ? 'flex-grow justify-center' : ''}`}>
