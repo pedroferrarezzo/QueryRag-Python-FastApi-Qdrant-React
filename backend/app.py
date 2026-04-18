@@ -1,3 +1,14 @@
+print(
+r"""
+  ____                               ____                
+ / __ \ _   _   ___  _ __  _   _    |  _ \  __ _   __ _ 
+| |  | | | | | / _ \| '__|| | | |   | |_) |/ _` | / _` |
+| |__| | |_| ||  __/| |   | |_| |   |  _ <| (_| || (_| |
+ \___\_\\____| \___||_|    \__, |   |_| \_\\____| \___ |
+                           |___/                  |___/ 
+"""
+)
+
 # Precisa ser importado primeiro para adicionar o binário do ffmpeg ao PATH antes de qualquer operação que dependa do ffmpeg.
 import static_ffmpeg
 static_ffmpeg.add_paths()
@@ -15,19 +26,6 @@ from config.env import QUERY_RAG_FRONTEND_URL
 
 from controllers.vectors_controller import router as vectors_router
 from controllers.rag_websocket_controller import router as websocket_router
-
-print(
-r"""
-  ____                               ____                
- / __ \ _   _   ___  _ __  _   _    |  _ \  __ _   __ _ 
-| |  | | | | | / _ \| '__|| | | |   | |_) |/ _` | / _` |
-| |__| | |_| ||  __/| |   | |_| |   |  _ <| (_| || (_| |
- \___\_\\____| \___||_|    \__, |   |_| \_\\____| \___ |
-                           |___/                  |___/ 
-"""
-)
-
-
 
 app = FastAPI(lifespan=lifespan)
 
