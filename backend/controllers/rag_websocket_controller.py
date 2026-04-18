@@ -49,6 +49,8 @@ async def websocket_endpoint(websocket: WebSocket):
                     if not questionId:
                         await websocket.send_json(ErrorDto(data="questionId é obrigatório.", timestamp=datetime.now().isoformat()).model_dump())
                         continue
+                
+                put_log_context("type", "websocket")
 
                 if prompt_b64:
                     prompt_raw_bytes = base64.b64decode(prompt_b64)

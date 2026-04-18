@@ -21,7 +21,7 @@ def clear_log_context():
     """Limpa o contexto de log, resetando para o dicionário vazio."""
     _log_context.set({})
 
-def configure_logging():
+def configure_app_logging():
     """Configura o logger para incluir os dados do contexto de log em cada mensagem."""
     logger = logging.getLogger("app")
 

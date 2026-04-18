@@ -9,6 +9,7 @@ logger = logging.getLogger("app")
 
 async def log_context_middleware(request: Request, call_next):
 
+    put_log_context("type", "http")
     put_log_context("request_id", str(uuid.uuid4()))
     put_log_context("method", request.method)
     put_log_context("url", str(request.url))
