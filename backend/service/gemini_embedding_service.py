@@ -1,7 +1,7 @@
 from google import genai
 from google.genai import types
 from typing import List, Union
-from config.env import GEMINI_API_KEY
+from config.env_config import GEMINI_API_KEY
 from exceptions import InvalidValueException, LmmException
 
 client = genai.Client(api_key=GEMINI_API_KEY)

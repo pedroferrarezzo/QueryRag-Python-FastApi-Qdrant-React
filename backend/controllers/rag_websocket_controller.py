@@ -1,25 +1,17 @@
-from datetime import datetime
 import json
 import base64
 import logging
-
+import magic
+from datetime import datetime
 from fastapi import WebSocket, WebSocketDisconnect
 from fastapi.websockets import WebSocketState
-
 from dto import ErrorDto, LmmResponseDto
-
 from exceptions import LmmException
-from service.embedding_service import embed_data
+from service.gemini_embedding_service import embed_data
 from service.gemini_service import contact_ai
-
-from repository.vector_qdrant_repository import search_vector
-
-from config.canonical_logger import put_log_context, clear_log_context
-
-import magic
-
+from service.qdrant_service import search_documents
+from config.canonical_logger_config import put_log_context, clear_log_context
 from fastapi import APIRouter
-
 from utils.parse_utils import convert_webm_to_wav
 
 router = APIRouter()
@@ -90,7 +82,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     query_vector = await embed_data(prompt)
 
                 put_log_context("query_vector_length", len(query_vector) if query_vector else 0)
-                documents = await search_vector(query_vector, 5)
+                documents = await search_documents(query_vector, 5)
 
                 if not documents:
                     await websocket.send_json(ErrorDto(

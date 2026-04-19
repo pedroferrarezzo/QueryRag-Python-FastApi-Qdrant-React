@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from qdrant_client.models import datetime
-from model.document import Document
+from .document_dto import DocumentDto
 
 class LmmResponseDto(BaseModel):
     """Classe para representar o resultado de consulta ao LMM."""
@@ -20,5 +19,5 @@ class LmmResponseDto(BaseModel):
     questionId: str
     """ID da pergunta associada à resposta."""
 
-    documents: list[Document]
+    documents: list[DocumentDto]
     """Documentos recuperados durante o RAG e utilizados pelo LMM para gerar a resposta."""

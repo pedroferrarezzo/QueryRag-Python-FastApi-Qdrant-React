@@ -1,22 +1,21 @@
 import tempfile
 import os
 
-from config.canonical_logger import put_log_context
+from config.canonical_logger_config import put_log_context
 
 from typing import Optional
 
 from fastapi import UploadFile, File, Form
 from fastapi.responses import JSONResponse
 
-from dto import VectorDto, IngestResultDto
+from dto import IngestResultDto, VectorDto, ObjectStorageDto
 
-from dto.object_storage_dto import ObjectStorageDto
 from exceptions import InvalidValueException
-from service.embedding_service import embed_data, embed_datas
+from service.gemini_embedding_service import embed_data, embed_datas
 from service.docling_service import extract_text
-from repository.minio_repository import upload_file
+from service.minio_service import upload_object
 
-from repository.vector_qdrant_repository import add_vector, search_vector, add_vectors
+from service.qdrant_service import search_documents, ingest_vector, ingest_vectors
 
 from utils.chunking_utils import chunk_text
 from utils.text_utils import clean_text
@@ -34,12 +33,12 @@ async def ingest(
     
     ingest_result: IngestResultDto = IngestResultDto(chunks_stored=0)
     fileBytes = await file.read()
-    object_storage = await upload_file(fileBytes, file.filename)
+    object_storage = await upload_object(fileBytes, file.filename)
 
     if "image" in file.content_type or "video" in file.content_type or "audio" in file.content_type:
         vector = await embed_data(fileBytes, file.content_type)
   
-        await add_vector(
+        await ingest_vector(
             VectorDto(
                 vector=vector,
                 type=file.content_type,
@@ -67,7 +66,7 @@ async def ingest(
             chunks = chunk_text(text)
             vectors = await embed_datas(contents=chunks)
 
-            vector_dtos = [VectorDto(
+            vectors = [VectorDto(
                 vector=vector,
                 type=file.content_type,
                 chunk=chunk,
@@ -75,7 +74,7 @@ async def ingest(
                 object_storage=ObjectStorageDto(key=object_storage["key"], url=object_storage["url"], include_in_prompt=False)
             ) for chunk, vector in zip(chunks, vectors)]
 
-            await add_vectors(vector_dtos)
+            await ingest_vectors(vectors)
         finally:        
             put_log_context("embedding_method_type", "docling_and_chunking")
             if path:
@@ -102,7 +101,7 @@ async def query(prompt: Optional[str] = Form(None), file: Optional[UploadFile] =
     else:
         query_vector = await embed_data(prompt)
 
-    documents = await search_vector(query_vector, 20)
+    documents = await search_documents(query_vector, 20)
 
     put_log_context("user_query", prompt)
     put_log_context("documents_returned_size", len(documents))

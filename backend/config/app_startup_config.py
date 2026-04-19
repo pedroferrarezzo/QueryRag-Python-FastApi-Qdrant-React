@@ -3,12 +3,13 @@ import logging
 from utils.cors_utils import get_cors_origins
 from fastapi import FastAPI
 
-from repository.vector_qdrant_repository import init_collection
-from repository.minio_repository import initialize_minio
-from contextlib import asynccontextmanager
-from config.canonical_logger import configure_app_logging, put_log_context
+from config.minio_config import initialize_minio
+from config.qdrant_config import init_collection
 
-from config.env import QUERY_RAG_FRONTEND_URL
+from contextlib import asynccontextmanager
+from config.canonical_logger_config import configure_app_logging, put_log_context
+
+from config.env_config import QUERY_RAG_FRONTEND_URL
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

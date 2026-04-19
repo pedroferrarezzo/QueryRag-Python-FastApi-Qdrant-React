@@ -3,7 +3,7 @@ import logging
 from fastapi import Request
 import uuid
 
-from config.canonical_logger import put_log_context, clear_log_context
+from config.canonical_logger_config import put_log_context, clear_log_context
 
 logger = logging.getLogger("app")
 

@@ -1,10 +1,10 @@
 from typing import AsyncIterator
 
-from config.env import GEMINI_API_KEY
+from config.env_config import GEMINI_API_KEY
 from google import genai
 from exceptions import InvalidValueException, LmmException
 from model import Document
-from repository.minio_repository import download_file
+from service.minio_service import download_object
 from google.genai import types
 
 client = genai.Client(api_key=GEMINI_API_KEY)
@@ -45,7 +45,7 @@ DOCUMENTOS:
 
     for document in documents:
         if document.metadata.object_storage.include_in_prompt:
-            object_file_bytes = await download_file(document.metadata.object_storage.key)
+            object_file_bytes = await download_object(document.metadata.object_storage.key)
             # Eventualmente pode ser alterado para from_url, caso o objeto seja acessível publicamente via URL, evitando a necessidade de download e reupload do arquivo para a API do Gemini
             parts.append(types.Part.from_bytes(data=object_file_bytes, mime_type=document.metadata.type))
 
