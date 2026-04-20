@@ -7,7 +7,6 @@ from fastapi.responses import JSONResponse
 from dto import IngestResultDto, VectorDto, ObjectDto
 from exceptions import InvalidValueException
 from utils.chunking_utils import chunk_text
-from utils.text_utils import clean_text
 from fastapi import APIRouter, Depends
 from config.ioc.service import get_object_storage_service, get_embedding_service, get_vector_service, get_document_parser_service
 from service import ObjectStorageService, EmbeddingService, VectorService, DocumentParserService
@@ -55,7 +54,6 @@ async def ingest(
                 
             path = tmp.name
             text = document_parser_service.extract_text(path)
-            text = clean_text(text)
 
             chunks = chunk_text(text)
             vectors = await embedding_service.get_vectors(contents=chunks)
