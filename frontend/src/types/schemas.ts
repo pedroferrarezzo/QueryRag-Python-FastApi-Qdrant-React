@@ -12,7 +12,7 @@ export const ErrorSchema = z.object({
 /**
  * Esquema para representar um arquivo armazenado no Object Storage.
  */
-export const ObjectStorageSchema = z.object({
+export const ObjectSchema = z.object({
   key: z.string(),
   url: z.string(),
   include_in_prompt: z.boolean()
@@ -25,7 +25,7 @@ export const MetadataSchema = z.object({
   type: z.string(),
   chunk: z.string().nullable().optional(),
   source: z.string(),
-  object_storage: ObjectStorageSchema,
+  object: ObjectSchema,
 });
 
 /**

@@ -32,9 +32,9 @@ export default function DocumentCard({key, doc}: DocumentProps) {
                 </div>
             )}
 
-            {doc.metadata.object_storage.url && (
+            {doc.metadata.object.url && (
                 <div className="text-xs text-muted-foreground">
-                    <a href={doc.metadata.object_storage.url} target="_blank" rel="noopener noreferrer">
+                    <a href={doc.metadata.object.url} target="_blank" rel="noopener noreferrer">
                         Ir para Object Storage
                         <ExternalLink size={12} className="ml-2 inline" />
                     </a>
