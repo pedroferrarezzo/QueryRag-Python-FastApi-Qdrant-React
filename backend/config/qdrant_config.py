@@ -1,8 +1,7 @@
 from qdrant_client import AsyncQdrantClient 
 from qdrant_client.models import Distance, VectorParams
 
-from config.env_config import QDRANT_HOST, QDRANT_PORT, QDRANT_COLLECTION
-from service.gemini_embedding_service import EMBEDDING_DIMENSION
+from config.env_config import QDRANT_HOST, QDRANT_PORT, QDRANT_COLLECTION, EMBEDDING_DIMENSION
 
 client = AsyncQdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
 

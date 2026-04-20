@@ -7,18 +7,22 @@ from fastapi import WebSocket, WebSocketDisconnect
 from fastapi.websockets import WebSocketState
 from dto import ErrorDto, LmmResponseDto
 from exceptions import LmmException
-from service.gemini_embedding_service import embed_data
-from service.gemini_service import contact_ai
-from service.qdrant_service import search_documents
 from config.canonical_logger_config import put_log_context, clear_log_context
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from utils.parse_utils import convert_webm_to_wav
+from config.ioc.service import get_embedding_service, get_vector_service, get_lmm_service
+from service import EmbeddingService, VectorService, LmmService
 
 router = APIRouter()
 logger = logging.getLogger("app")
 
 @router.websocket("/rag/chat")
-async def websocket_endpoint(websocket: WebSocket):
+async def websocket_endpoint(
+    websocket: WebSocket,
+    embedding_service: EmbeddingService = Depends(get_embedding_service),
+    vector_service: VectorService = Depends(get_vector_service),
+    lmm_service: LmmService = Depends(get_lmm_service)
+):
     await websocket.accept()
 
     try:
@@ -76,13 +80,13 @@ async def websocket_endpoint(websocket: WebSocket):
             try:
                 if prompt_raw_bytes:
                     put_log_context("query_vector_embed_type", "binary")
-                    query_vector = await embed_data(prompt_raw_bytes, prompt_mime_type)
+                    query_vector = await embedding_service.get_vector(prompt_raw_bytes, prompt_mime_type)
                 else:
                     put_log_context("query_vector_embed_type", "text")
-                    query_vector = await embed_data(prompt)
+                    query_vector = await embedding_service.get_vector(prompt)
 
                 put_log_context("query_vector_length", len(query_vector) if query_vector else 0)
-                documents = await search_documents(query_vector, 5)
+                documents = await vector_service.search_documents(query_vector, 5)
 
                 if not documents:
                     await websocket.send_json(ErrorDto(
@@ -91,7 +95,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     ).model_dump())
                     continue
 
-                responses = await contact_ai(prompt if prompt else "", documents, prompt_raw_bytes, prompt_mime_type)
+                responses = await lmm_service.contact_ai(prompt if prompt else "", documents, prompt_raw_bytes, prompt_mime_type)
 
                 async for response in responses:
                     for part in response.candidates[0].content.parts:

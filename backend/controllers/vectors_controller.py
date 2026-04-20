@@ -1,44 +1,38 @@
 import tempfile
 import os
-
 from config.canonical_logger_config import put_log_context
-
 from typing import Optional
-
 from fastapi import UploadFile, File, Form
 from fastapi.responses import JSONResponse
-
 from dto import IngestResultDto, VectorDto, ObjectStorageDto
-
 from exceptions import InvalidValueException
-from service.gemini_embedding_service import embed_data, embed_datas
-from service.docling_service import extract_text
-from service.minio_service import upload_object
-
-from service.qdrant_service import search_documents, ingest_vector, ingest_vectors
-
 from utils.chunking_utils import chunk_text
 from utils.text_utils import clean_text
-
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from config.ioc.service import get_object_storage_service, get_embedding_service, get_vector_service, get_document_parser_service
+from service import ObjectStorageService, EmbeddingService, VectorService, DocumentParserService
 
 router = APIRouter()
 
 @router.post("/vectors/ingest")
 async def ingest(
-    file: UploadFile = File(None)
+    file: UploadFile = File(None),
+    object_storage_service: ObjectStorageService = Depends(get_object_storage_service),
+    embedding_service: EmbeddingService = Depends(get_embedding_service),
+    vector_service: VectorService = Depends(get_vector_service),
+    document_parser_service: DocumentParserService = Depends(get_document_parser_service)
 ):
     if not file or not file.filename:
         raise InvalidValueException("Nenhum arquivo fornecido para ingestão.")
     
     ingest_result: IngestResultDto = IngestResultDto(chunks_stored=0)
     fileBytes = await file.read()
-    object_storage = await upload_object(fileBytes, file.filename)
+    object_storage = await object_storage_service.upload_object(fileBytes, file.filename)
 
     if "image" in file.content_type or "video" in file.content_type or "audio" in file.content_type:
-        vector = await embed_data(fileBytes, file.content_type)
+        vector = await embedding_service.get_vector(fileBytes, file.content_type)
   
-        await ingest_vector(
+        await vector_service.ingest_vector(
             VectorDto(
                 vector=vector,
                 type=file.content_type,
@@ -60,11 +54,11 @@ async def ingest(
                 tmp.write(fileBytes)
                 
             path = tmp.name
-            text = extract_text(path)
+            text = document_parser_service.extract_text(path)
             text = clean_text(text)
 
             chunks = chunk_text(text)
-            vectors = await embed_datas(contents=chunks)
+            vectors = await embedding_service.get_vectors(contents=chunks)
 
             vectors = [VectorDto(
                 vector=vector,
@@ -74,7 +68,7 @@ async def ingest(
                 object_storage=ObjectStorageDto(key=object_storage["key"], url=object_storage["url"], include_in_prompt=False)
             ) for chunk, vector in zip(chunks, vectors)]
 
-            await ingest_vectors(vectors)
+            await vector_service.ingest_vectors(vectors)
         finally:        
             put_log_context("embedding_method_type", "docling_and_chunking")
             if path:
@@ -85,7 +79,12 @@ async def ingest(
     return JSONResponse(status_code=201, content=ingest_result.model_dump())
 
 @router.post("/vectors/query")
-async def query(prompt: Optional[str] = Form(None), file: Optional[UploadFile] = File(None)):
+async def query(
+    prompt: Optional[str] = Form(None), 
+    file: Optional[UploadFile] = File(None),
+    embedding_service: EmbeddingService = Depends(get_embedding_service),
+    vector_service: VectorService = Depends(get_vector_service)
+):
 
     if not prompt and (not file or not file.filename):
         raise InvalidValueException("Forneça um prompt ou um arquivo para pesquisa.")
@@ -97,11 +96,11 @@ async def query(prompt: Optional[str] = Form(None), file: Optional[UploadFile] =
 
     if file and file.filename:
         fileBytes = await file.read()
-        query_vector = await embed_data(fileBytes, file.content_type)
+        query_vector = await embedding_service.get_vector(fileBytes, file.content_type)
     else:
-        query_vector = await embed_data(prompt)
+        query_vector = await embedding_service.get_vector(prompt)
 
-    documents = await search_documents(query_vector, 20)
+    documents = await vector_service.search_documents(query_vector, 20)
 
     put_log_context("user_query", prompt)
     put_log_context("documents_returned_size", len(documents))

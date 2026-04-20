@@ -1,4 +1,6 @@
 GEMINI_API_KEY=xxxxxx
+GEMINI_LMM_MODEL=gemini-2.5-flash
+GEMINI_EMBEDDING_MODEL=gemini-embedding-2-preview
 QDRANT_HOST=localhost
 QDRANT_PORT=6333
 QDRANT_COLLECTION=rag_documents
@@ -10,3 +12,7 @@ MINIO_SECRET_KEY=ragadmin
 MINIO_BUCKET_NAME=rag-documents
 MINIO_SECURE=False
 QUERY_RAG_FRONTEND_URL=http://localhost:5173
+# Dimensão dos vetores gerados pelo modelo de embedding
+# A dimensão corresponde na prática a quantidade de índices do vetor de embedding
+# https://ai.google.dev/gemini-api/docs/embeddings?hl=pt-br#control-embedding-size
+EMBEDDING_DIMENSION=3072
