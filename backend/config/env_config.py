@@ -22,6 +22,7 @@ MINIO_BUCKET_NAME = os.getenv("MINIO_BUCKET_NAME")
 MINIO_SECURE = os.getenv("MINIO_SECURE")
 QUERY_RAG_FRONTEND_URL = os.getenv("QUERY_RAG_FRONTEND_URL")
 EMBEDDING_DIMENSION = os.getenv("EMBEDDING_DIMENSION")
+CHUNK_LIST_MAX_LENGTH = os.getenv("CHUNK_LIST_MAX_LENGTH")
 
 if not GEMINI_API_KEY:
     raise StartupException("GEMINI_API_KEY não definida")
@@ -53,7 +54,10 @@ if not QUERY_RAG_FRONTEND_URL:
     raise StartupException("QUERY_RAG_FRONTEND_URL não definida")
 if not EMBEDDING_DIMENSION:
     raise StartupException("EMBEDDING_DIMENSION não definida")
+if not CHUNK_LIST_MAX_LENGTH:
+    raise StartupException("CHUNK_LIST_MAX_LENGTH não definida")
 
 EMBEDDING_DIMENSION = int(EMBEDDING_DIMENSION)
+CHUNK_LIST_MAX_LENGTH = int(CHUNK_LIST_MAX_LENGTH)
 
 MINIO_SECURE = MINIO_SECURE.lower() == "true"
