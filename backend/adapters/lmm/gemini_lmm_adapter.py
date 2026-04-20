@@ -20,8 +20,8 @@ class GeminiLmmModel(LmmModel):
             parts.append(types.Part.from_bytes(data=prompt_raw_bytes, mime_type=prompt_mime_type))
 
         for document in documents:
-            if document.metadata.object_storage.include_in_prompt:
-                object_file_bytes = await self._object_storage_repository.download_file(document.metadata.object_storage.key)
+            if document.metadata.object.include_in_prompt:
+                object_file_bytes = await self._object_storage_repository.download_file(document.metadata.object.key)
                 # Eventualmente pode ser alterado para from_url, caso o objeto seja acessível publicamente via URL, evitando a necessidade de download e reupload do arquivo para a API do Gemini
                 parts.append(types.Part.from_bytes(data=object_file_bytes, mime_type=document.metadata.type))
 

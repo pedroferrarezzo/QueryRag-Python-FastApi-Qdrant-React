@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from .object_storage import ObjectStorage
+from .object import Object
 
 class Vector(BaseModel):
     """Classe para representar um conteúdo vetorizado via embedding."""
@@ -16,6 +16,6 @@ class Vector(BaseModel):
     source: str
     """fonte do conteúdo (ex: nome do arquivo, URL, etc)."""
 
-    object_storage: ObjectStorage
-    """Informações de armazenamento do conteúdo original."""
+    object: Object
+    """Informações de objeto do conteúdo original."""
         

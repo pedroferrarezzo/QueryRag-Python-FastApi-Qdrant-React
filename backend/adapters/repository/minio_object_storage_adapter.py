@@ -10,7 +10,7 @@ class MinioObjectStorageRepository(ObjectStorageRepository):
     """Implementação do repositório de armazenamento usando o MinIO."""
 
     async def upload_file(self, file_content: bytes, file_name: str) -> dict[str, str]:
-        """Realiza o upload de um arquivo para o MinIO e retorna a chave do arquivo."""
+        """Realiza o upload de um arquivo para o MinIO e retorna um dicionário com informações sobre o arquivo."""
 
         file_id = str(uuid.uuid4())
         file_key = f"{file_id}_{file_name}"

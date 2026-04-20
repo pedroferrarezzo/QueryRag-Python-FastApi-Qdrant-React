@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 
-class ObjectStorageDto(BaseModel):
-    """Classe para armazenar informações de armazenamento em object storage."""
+class ObjectDto(BaseModel):
+    """Classe para armazenar informações de um objeto."""
     
     key: str
-    """chave de armazenamento em object storage."""
+    """chave de armazenamento do objeto."""
 
     url: str
     """URL para acessar o objeto armazenado."""

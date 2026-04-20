@@ -26,10 +26,10 @@ class QdrantVectorRepository(VectorRepository):
                         "type": vector_object.type,
                         "chunk": vector_object.chunk,
                         "source": vector_object.source,
-                        "object_storage": {
-                            "key": vector_object.object_storage.key,
-                            "url": vector_object.object_storage.url,
-                            "include_in_prompt": vector_object.object_storage.include_in_prompt
+                        "object": {
+                            "key": vector_object.object.key,
+                            "url": vector_object.object.url,
+                            "include_in_prompt": vector_object.object.include_in_prompt
                         }
                     },
                 )
@@ -50,10 +50,10 @@ class QdrantVectorRepository(VectorRepository):
                         "type": vector_object.type,
                         "chunk": vector_object.chunk,
                         "source": vector_object.source,
-                        "object_storage": {
-                            "key": vector_object.object_storage.key,
-                            "url": vector_object.object_storage.url,
-                            "include_in_prompt": vector_object.object_storage.include_in_prompt
+                        "object": {
+                            "key": vector_object.object.key,
+                            "url": vector_object.object.url,
+                            "include_in_prompt": vector_object.object.include_in_prompt
                         }
                     },
                 )
@@ -87,7 +87,7 @@ class QdrantVectorRepository(VectorRepository):
                         type=payload.get("type"),
                         chunk=payload.get("chunk"),
                         source=payload.get("source"),
-                        object_storage=payload.get("object_storage")
+                        object=payload.get("object")
                     ),
                     score=float(result.score),
                     rerank_score=None  # Reranking pode ser implementado posteriormente

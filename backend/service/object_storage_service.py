@@ -9,7 +9,7 @@ class ObjectStorageService:
         self._repository = repository
 
     async def upload_object(self, file_content: bytes, file_name: str) -> dict[str, str]:
-        """Realiza o upload de um objeto e retorna a chave do arquivo."""
+        """Realiza o upload de um objeto e retorna um dicionário com informações sobre o arquivo."""
         if not file_content or not file_name:
             raise InvalidValueException("O conteúdo do arquivo e o nome do arquivo são obrigatórios.")
         

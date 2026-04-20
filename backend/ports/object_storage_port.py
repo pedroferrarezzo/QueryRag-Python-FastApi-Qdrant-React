@@ -5,7 +5,7 @@ class ObjectStorageRepository(ABC):
 
     @abstractmethod
     async def upload_file(self, file_content: bytes, file_name: str) -> dict[str, str]:
-        """Realiza o upload de um arquivo e retorna a chave e URL do arquivo."""
+        """Realiza o upload de um arquivo e retorna um dicionário com informações sobre o arquivo."""
         pass
 
     @abstractmethod

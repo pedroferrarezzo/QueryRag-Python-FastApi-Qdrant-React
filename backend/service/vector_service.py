@@ -1,5 +1,5 @@
-from dto import DocumentDto, VectorDto, ObjectStorageDto, MetadataDto
-from model import Vector, ObjectStorage
+from dto import DocumentDto, VectorDto, ObjectDto, MetadataDto
+from model import Vector, Object
 from exceptions import InvalidValueException
 from ports import VectorRepository
 
@@ -15,10 +15,10 @@ class VectorService:
         if not vector_dto.vector:
             raise InvalidValueException("O vetor não pode ser vazio para ser adicionado ao banco de dados.")
         
-        object_storage = ObjectStorage(
-            key=vector_dto.object_storage.key,
-            url=vector_dto.object_storage.url,
-            include_in_prompt=vector_dto.object_storage.include_in_prompt
+        object = Object(
+            key=vector_dto.object.key,
+            url=vector_dto.object.url,
+            include_in_prompt=vector_dto.object.include_in_prompt
         )
         
         vector = Vector(
@@ -26,7 +26,7 @@ class VectorService:
             type=vector_dto.type,
             chunk=vector_dto.chunk,
             source=vector_dto.source,
-            object_storage=object_storage
+            object=object
         )
 
         await self._repository.add_vector(vector)
@@ -36,11 +36,11 @@ class VectorService:
         if not vector_dtos:
             raise InvalidValueException("A lista de vetores não pode ser vazia para ser adicionada ao banco de dados.")
         
-        object_storages = [
-            ObjectStorage(
-                key=vector_dto.object_storage.key,
-                url=vector_dto.object_storage.url,
-                include_in_prompt=vector_dto.object_storage.include_in_prompt
+        objects = [
+            Object(
+                key=vector_dto.object.key,
+                url=vector_dto.object.url,
+                include_in_prompt=vector_dto.object.include_in_prompt
             )
             for vector_dto in vector_dtos
         ]
@@ -50,9 +50,9 @@ class VectorService:
                 type=vector_dto.type,
                 chunk=vector_dto.chunk,
                 source=vector_dto.source,
-                object_storage=object_storage
+                object=object
             )
-            for vector_dto, object_storage in zip(vector_dtos, object_storages)
+            for vector_dto, object in zip(vector_dtos, objects)
         ]
 
         await self._repository.add_vectors(vectors)
@@ -64,11 +64,11 @@ class VectorService:
         
         documents = await self._repository.search_vector(vector, k)
 
-        object_storage_dtos = [
-            ObjectStorageDto(
-                key=document.metadata.object_storage.key,
-                url=document.metadata.object_storage.url,
-                include_in_prompt=document.metadata.object_storage.include_in_prompt
+        object_dtos = [
+            ObjectDto(
+                key=document.metadata.object.key,
+                url=document.metadata.object.url,
+                include_in_prompt=document.metadata.object.include_in_prompt
             )
             for document in documents
         ]
@@ -77,9 +77,9 @@ class VectorService:
                 source=document.metadata.source,
                 chunk=document.metadata.chunk,
                 type=document.metadata.type,
-                object_storage=object_storage_dto
+                object=object_dto
             )
-            for document, object_storage_dto in zip(documents, object_storage_dtos)
+            for document, object_dto in zip(documents, object_dtos)
         ]
         document_dtos = [
             DocumentDto(

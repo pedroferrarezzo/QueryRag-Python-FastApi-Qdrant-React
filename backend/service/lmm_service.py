@@ -1,7 +1,7 @@
 from typing import AsyncIterator
 
 from exceptions import InvalidValueException, LmmException
-from model import Document, Metadata, ObjectStorage
+from model import Document, Metadata, Object
 from dto import DocumentDto
 from ports import LmmModel
 
@@ -48,11 +48,11 @@ PERGUNTA:
 DOCUMENTOS:
 {chr(10).join(context)}
 """
-        object_storages = [
-            ObjectStorage(
-                key=doc.metadata.object_storage.key,
-                url=doc.metadata.object_storage.url,
-                include_in_prompt=doc.metadata.object_storage.include_in_prompt
+        objects = [
+            Object(
+                key=doc.metadata.object.key,
+                url=doc.metadata.object.url,
+                include_in_prompt=doc.metadata.object.include_in_prompt
             )
             for doc in document_dtos
         ]
@@ -61,9 +61,9 @@ DOCUMENTOS:
                 type=doc.metadata.type,
                 chunk=doc.metadata.chunk,
                 source=doc.metadata.source,
-                object_storage=object_storage
+                object=object
             )
-            for doc, object_storage in zip(document_dtos, object_storages)
+            for doc, object in zip(document_dtos, objects)
         ]
         documents = [
             Document (

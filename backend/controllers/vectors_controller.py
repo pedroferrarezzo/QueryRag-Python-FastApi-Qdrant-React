@@ -4,7 +4,7 @@ from config.canonical_logger_config import put_log_context
 from typing import Optional
 from fastapi import UploadFile, File, Form
 from fastapi.responses import JSONResponse
-from dto import IngestResultDto, VectorDto, ObjectStorageDto
+from dto import IngestResultDto, VectorDto, ObjectDto
 from exceptions import InvalidValueException
 from utils.chunking_utils import chunk_text
 from utils.text_utils import clean_text
@@ -27,7 +27,7 @@ async def ingest(
     
     ingest_result: IngestResultDto = IngestResultDto(chunks_stored=0)
     fileBytes = await file.read()
-    object_storage = await object_storage_service.upload_object(fileBytes, file.filename)
+    object_data = await object_storage_service.upload_object(fileBytes, file.filename)
 
     if "image" in file.content_type or "video" in file.content_type or "audio" in file.content_type:
         vector = await embedding_service.get_vector(fileBytes, file.content_type)
@@ -37,7 +37,7 @@ async def ingest(
                 vector=vector,
                 type=file.content_type,
                 source=file.filename,
-                object_storage=ObjectStorageDto(key=object_storage["key"], url=object_storage["url"], include_in_prompt=True)
+                object=ObjectDto(key=object_data["key"], url=object_data["url"], include_in_prompt=True)
             )
         )
 
@@ -65,7 +65,7 @@ async def ingest(
                 type=file.content_type,
                 chunk=chunk,
                 source=file.filename,
-                object_storage=ObjectStorageDto(key=object_storage["key"], url=object_storage["url"], include_in_prompt=False)
+                object=ObjectDto(key=object_data["key"], url=object_data["url"], include_in_prompt=False)
             ) for chunk, vector in zip(chunks, vectors)]
 
             await vector_service.ingest_vectors(vectors)
