@@ -9,17 +9,15 @@ WORKDIR /app
 COPY requirements.txt ./
 
 RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends libmagic1 && \
+    apt-get install -y --no-install-recommends libmagic1 libgl1 libglib2.0-0 && \
     rm -rf /var/lib/apt/lists/*
 
-RUN addgroup --system app \
-    && adduser --system --ingroup app app 
-
-# A lib static-ffmpeg precisa gravar/executar binários dentro da pasta de pacotes do Python (ex: .lock). 
-# Como o usuário 'app' será utilizado para subir o processo da aplicação, ele precisa ser o dono dessa pasta também.    
+RUN addgroup app \
+    && adduser --ingroup app app 
+ 
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt \
-    && chown -R app:app /usr/local/lib/python3.11/site-packages/static_ffmpeg/
+    && chown -R app:app /usr/local/lib/python3.11/site-packages/
 
 COPY --chown=app:app . .
 

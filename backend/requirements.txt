@@ -3,7 +3,7 @@ uvicorn
 faiss-cpu 
 sentence-transformers 
 pillow 
-docling 
+docling
 python-multipart
 huggingface_hub[hf_xet]
 python-dotenv 
