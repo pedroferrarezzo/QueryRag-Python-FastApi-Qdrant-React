@@ -8,7 +8,7 @@ python-multipart
 huggingface_hub[hf_xet]
 python-dotenv 
 websockets
-google.genai
+google.genai==1.68.0
 qdrant_client
 miniopy-async
 python-magic-bin; sys_platform == 'win32'
