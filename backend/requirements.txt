@@ -3,7 +3,7 @@ uvicorn
 faiss-cpu 
 sentence-transformers 
 pillow 
-docling
+docling --extra-index-url https://download.pytorch.org/whl/cpu
 python-multipart
 huggingface_hub[hf_xet]
 python-dotenv 

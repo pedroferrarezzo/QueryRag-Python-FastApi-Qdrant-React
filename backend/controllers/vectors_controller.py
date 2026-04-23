@@ -66,8 +66,8 @@ async def ingest(
             ) for chunk, vector in zip(chunks, vectors)]
 
             await vector_service.ingest_vectors(vectors)
-        finally:        
             put_log_context("embedding_method_type", "docling_and_chunking")
+        finally:        
             if path:
                 os.remove(path)
 
