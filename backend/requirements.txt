@@ -1,15 +1,13 @@
 fastapi 
-uvicorn 
-faiss-cpu 
-sentence-transformers 
+uvicorn
 pillow 
-docling --extra-index-url https://download.pytorch.org/whl/cpu
+docling==2.81.0 --extra-index-url https://download.pytorch.org/whl/cpu
 python-multipart
-huggingface_hub[hf_xet]
+huggingface_hub[hf_xet]==0.36.2
 python-dotenv 
 websockets
 google.genai==1.68.0
-qdrant_client
+qdrant_client==1.17.1
 miniopy-async
 python-magic-bin; sys_platform == 'win32'
 python-magic; sys_platform != 'win32'
