@@ -1,6 +1,6 @@
-# QueryRag
+# `QueryRag` 🚀
 
-Plataforma de Retrieval-Augmented Generation (RAG) multimodal para ingestao, indexacao vetorial e consulta inteligente de conteudo, com backend em FastAPI, armazenamento vetorial em Qdrant, armazenamento de objetos em MinIO e interface web em React.
+Plataforma de `Retrieval-Augmented Generation` (`RAG`) multimodal para ingestao, indexacao vetorial e consulta inteligente de conteudo, com backend em `FastAPI`, armazenamento vetorial em `Qdrant`, armazenamento de objetos em `MinIO` e interface web em `React`.
 
 <div align="center">
 	<a href="#visao-geral">Visao Geral</a> •
@@ -19,35 +19,37 @@ Plataforma de Retrieval-Augmented Generation (RAG) multimodal para ingestao, ind
 
 ---
 
-<h2 id="visao-geral">Visao Geral</h2>
+<h2 id="visao-geral">Visao Geral ✨</h2>
 
-O QueryRag foi construido para responder perguntas com base em documentos e arquivos ingeridos pelo sistema.
+O `QueryRag` foi construido para responder perguntas com base em documentos e arquivos ingeridos pelo sistema.
+
+Neste projeto, os embeddings sao gerados com `Google Gemini Embeddings 2` (`gemini-embedding-2-preview`), o primeiro modelo de embeddings multimodal do Google: https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/embedding-2?hl=pt-br
 
 O fluxo principal funciona assim:
 
-1. Arquivos sao enviados para ingestao.
-2. O backend faz parsing/chunking quando necessario.
-3. Embeddings multimodais sao gerados com Gemini.
-4. Vetores e metadados sao persistidos no Qdrant.
-5. Arquivos originais sao armazenados no MinIO.
-6. Consultas por texto/arquivo recuperam documentos relevantes.
-7. O chat RAG responde via WebSocket com streaming.
+1. 📤 Arquivos sao enviados para ingestao.
+2. 🧩 O backend faz parsing/chunking quando necessario.
+3. 🧠 Embeddings multimodais sao gerados com `Google Gemini Embeddings 2`.
+4. 🗂️ Vetores e metadados sao persistidos no `Qdrant`.
+5. 📦 Arquivos originais sao armazenados no `MinIO`.
+6. 🔎 Consultas por texto/arquivo recuperam documentos relevantes.
+7. 💬 O chat RAG responde via WebSocket com streaming.
 
 ---
 
-<h2 id="recursos-principais">Recursos Principais</h2>
+<h2 id="recursos-principais">Recursos Principais 🧩</h2>
 
-- Ingestao de documentos com parser (Docling) e chunking semantico.
-- Ingestao multimodal direta (imagem, audio, video) com embedding do arquivo inteiro.
-- Busca vetorial por similaridade cosseno no Qdrant.
-- Chat RAG em streaming via WebSocket.
-- Suporte a pergunta textual ou binaria (ex.: audio WebM convertido para WAV).
-- Frontend com 3 jornadas principais: Chat, Ingestao e Busca Vetorial.
-- Arquitetura em camadas (dominio, aplicacao e infraestrutura) com portas e adaptadores.
+- 🧱 Ingestao de documentos com parser (`Docling`) e chunking semantico.
+- 🎞️ Ingestao multimodal direta (imagem, audio, video) com embedding do arquivo inteiro via `Google Gemini Embeddings 2`.
+- 🎯 Busca vetorial por similaridade cosseno no `Qdrant`.
+- 💬 Chat `RAG` em streaming via `WebSocket`.
+- 🎙️ Suporte a pergunta textual ou binaria (ex.: audio WebM convertido para WAV).
+- 🧭 Frontend com 3 jornadas principais: Chat, Ingestao e Busca Vetorial.
+- 🏗️ Arquitetura em camadas (dominio, aplicacao e infraestrutura) com portas e adaptadores.
 
 ---
 
-<h2 id="apis">APIs</h2>
+<h2 id="apis">APIs 🔌</h2>
 
 ### Endpoints principais
 
@@ -62,17 +64,17 @@ O fluxo principal funciona assim:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 
-> Em Docker Compose, o backend e publicado na porta definida por BACKEND_PORT (padrao no exemplo: 8005).
+>ℹ️ Em `Docker Compose`, o backend e publicado na porta definida por `BACKEND_PORT` (padrao no exemplo: 8005).
 
 ---
 
-<h2 id="arquitetura">Arquitetura</h2>
+<h2 id="arquitetura">Arquitetura 🏗️</h2>
 
-O projeto segue uma abordagem de Clean/Hexagonal Architecture:
+O projeto segue uma abordagem de `Hexagonal Architecture`:
 
-- Dominio: entidades, value objects, excecoes e contratos de dominio.
-- Aplicacao: casos de uso/servicos que orquestram regra de negocio.
-- Infraestrutura: adaptadores de entrada (controllers) e saida (Gemini, Qdrant, MinIO, Docling).
+- `Dominio`: entidades, value objects, excecoes e contratos de dominio.
+- `Aplicacao`: casos de uso/servicos que orquestram regra de negocio.
+- `Infraestrutura`: adaptadores de entrada (controllers) e saida (`Gemini Embeddings 2` e `LMM`, `Qdrant`, `MinIO`, `Docling`).
 
 ### Diagrama de camadas
 
@@ -90,7 +92,7 @@ flowchart LR
 
 ---
 
-<h2 id="fluxos-rag">Fluxos RAG</h2>
+<h2 id="fluxos-rag">Fluxos RAG 🔄</h2>
 
 ### 1) Fluxo de ingestao
 
@@ -101,7 +103,7 @@ sequenceDiagram
 		participant O as Object Storage Service (MinIO)
 		participant P as Document Parser Service (Docling)
 		participant T as Content Service (Chunking)
-		participant E as Embedding Service (Gemini)
+		participant E as Embedding Service (Gemini Embeddings 2)
 		participant V as Vector Service (Qdrant)
 
 		U->>C: POST /vectors/ingest (arquivo)
@@ -168,36 +170,36 @@ sequenceDiagram
 
 ---
 
-<h2 id="tecnologias">Tecnologias</h2>
+<h2 id="tecnologias">Tecnologias 🛠️</h2>
 
 ### Backend
 
-- Python 3.11
-- FastAPI + Uvicorn
-- Google Gemini API (embeddings e LMM)
-- Docling (extracao de texto)
-- Qdrant Client
-- miniopy-async (MinIO)
-- pydub + static-ffmpeg (processamento de audio)
+- `Python 3.11`
+- `FastAPI` + `Uvicorn`
+- `Google Gemini API` (`Gemini Embeddings 2` para vetorizacao multimodal e `Gemini LMM` para geracao)
+- `Docling` (extracao de texto)
+- `Qdrant Client`
+- `miniopy-async` (`MinIO`)
+- `pydub` + `static-ffmpeg` (processamento de audio)
 
 ### Frontend
 
-- React 19 + TypeScript
-- Vite
-- Tailwind CSS
-- Radix UI / shadcn
-- WebSocket nativo
+- `React 19` + `TypeScript`
+- `Vite`
+- `Tailwind CSS`
+- `Radix UI` / `shadcn`
+- `WebSocket` nativo
 
 ### Infra local
 
-- Docker e Docker Compose
-- Qdrant
-- MinIO
-- Nginx (servindo build do frontend)
+- `Docker` e `Docker Compose`
+- `Qdrant`
+- `MinIO`
+- `Nginx` (servindo build do frontend)
 
 ---
 
-<h2 id="infraestrutura-local">Infraestrutura Local</h2>
+<h2 id="infraestrutura-local">Infraestrutura Local 🧱</h2>
 
 ```mermaid
 flowchart TB
@@ -224,9 +226,9 @@ flowchart TB
 
 ---
 
-<h2 id="instalacao-e-uso">Instalacao e Uso</h2>
+<h2 id="instalacao-e-uso">Instalacao e Uso 🚀</h2>
 
-## Opcao 1: Executar tudo com Docker Compose (recomendado)
+## Opcao 1: Executar tudo com Docker Compose (recomendado) 🐳
 
 1. Copie o arquivo de ambiente do compose:
 
@@ -240,7 +242,7 @@ PowerShell:
 Copy-Item docker/env-example docker/.env
 ```
 
-2. Ajuste as variaveis (principalmente GEMINI_API_KEY) em docker/.env.
+2. Ajuste as variaveis (principalmente `GEMINI_API_KEY`) em `docker/.env`.
 
 3. Suba os servicos:
 
@@ -251,11 +253,11 @@ docker compose up --build
 
 4. Acesse:
 
-- Frontend: http://localhost:80
-- Backend Docs (considerando BACKEND_PORT=8005): http://localhost:8005/docs
-- MinIO Console: http://localhost:9001
+- 🌐 `Frontend`: http://localhost:80
+- 📘 `Backend Docs` (considerando `BACKEND_PORT=8005`): http://localhost:8005/docs
+- 🪣 `MinIO Console`: http://localhost:9001
 
-## Opcao 2: Executar em desenvolvimento (backend e frontend separados)
+## Opcao 2: Executar em desenvolvimento (backend e frontend separados) 🧪
 
 ### Backend
 
@@ -297,32 +299,34 @@ Frontend padrao: http://localhost:5173
 
 ---
 
-<h2 id="configuracao-de-ambiente">Configuracao de Ambiente</h2>
+<h2 id="configuracao-de-ambiente">Configuracao de Ambiente ⚙️</h2>
 
-### Backend (backend/env-example)
-
-| Variavel | Descricao |
-|---|---|
-| GEMINI_API_KEY | Chave da API Gemini |
-| GEMINI_LMM_MODEL | Modelo LMM (ex.: gemini-2.5-flash) |
-| GEMINI_EMBEDDING_MODEL | Modelo de embedding |
-| QDRANT_HOST, QDRANT_PORT, QDRANT_COLLECTION | Configuracao do Qdrant |
-| MINIO_HOST, MINIO_PORT, MINIO_CONSOLE_PORT | Configuracao do MinIO |
-| MINIO_ACCESS_KEY, MINIO_SECRET_KEY, MINIO_BUCKET_NAME, MINIO_SECURE | Credenciais e bucket do MinIO |
-| QUERY_RAG_FRONTEND_URL | Origem permitida no CORS |
-| EMBEDDING_DIMENSION | Dimensao do embedding (padrao 3072) |
-| CHUNK_LIST_MAX_LENGTH | Limite maximo de chunks por documento |
-
-### Frontend (frontend/env-example)
+### `Backend` (`backend/env-example`)
 
 | Variavel | Descricao |
 |---|---|
-| VITE_API_ENDPOINT | Base URL HTTP do backend |
-| VITE_WS_CHAT_ENDPOINT | URL WebSocket do chat |
+| `GEMINI_API_KEY` | Chave da API Gemini |
+| `GEMINI_LMM_MODEL` | Modelo LMM (padrao no projeto: `gemini-2.5-flash`) |
+| `GEMINI_EMBEDDING_MODEL` | Modelo de embedding (padrao no projeto: `gemini-embedding-2-preview`) |
+| `QDRANT_HOST`, `QDRANT_PORT`, `QDRANT_COLLECTION` | Configuracao do `Qdrant` |
+| `MINIO_HOST`, `MINIO_PORT`, `MINIO_CONSOLE_PORT` | Configuracao do `MinIO` |
+| `MINIO_ACCESS_KEY`, `MINIO_SECRET_KEY`, `MINIO_BUCKET_NAME`, `MINIO_SECURE` | Credenciais e bucket do `MinIO` |
+| `QUERY_RAG_FRONTEND_URL` | Origem permitida no `CORS` |
+| `EMBEDDING_DIMENSION` | Dimensao do embedding (padrao 3072) |
+| `CHUNK_LIST_MAX_LENGTH` | Limite maximo de chunks por documento |
+
+Referencia do modelo de embedding usado neste projeto: `Gemini Embeddings 2` (primeiro modelo de embeddings multimodal do Google) - https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/embedding-2?hl=pt-br
+
+### `Frontend` (`frontend/env-example`)
+
+| Variavel | Descricao |
+|---|---|
+| `VITE_API_ENDPOINT` | Base URL HTTP do backend |
+| `VITE_WS_CHAT_ENDPOINT` | URL `WebSocket` do chat |
 
 ---
 
-<h2 id="estrutura-do-projeto">Estrutura do Projeto</h2>
+<h2 id="estrutura-do-projeto">Estrutura do Projeto 🗂️</h2>
 
 ```text
 backend/
@@ -358,16 +362,18 @@ docker/
 
 ---
 
-<h2 id="debitos-tecnicos-e-melhorias">Debitos Tecnicos e Melhorias</h2>
+<h2 id="debitos-tecnicos-e-melhorias">Debitos Tecnicos e Melhorias 📌</h2>
 
-- Reranking ainda nao implementado no fluxo de recuperacao (campo rerank_score permanece nulo).
-- Estrategias avancadas de observabilidade (tracing distribuido e metricas de qualidade de recuperacao) podem ser expandidas.
-- Pipeline de avaliacao automatica da qualidade das respostas RAG pode ser adicionada.
-- Politicas de autenticacao/autorizacao ainda podem evoluir para ambientes produtivos.
+- ⚠️ Reranking ainda nao implementado no fluxo de recuperacao (campo rerank_score permanece nulo).
+- ℹ️ Estrategias de observabilidade (tracing distribuido e metricas de qualidade de recuperacao) podem ser expandidas.
+- 🧪 Pipeline de avaliacao automatica da qualidade das respostas RAG pode ser adicionada.
+- 🔐 Implementação de autenticação/autorização.
+- 🧩 Implementação de suporte para outros LLMs/Modelos de embedding multimodal via Strategy Pattern + Factory Pattern (Sentence Transformers SDK, OpenAI SDK, etc...).
+- ✅ Implementação de testes unitários, integração e E2E.
 
 ---
 
-<h2 id="contribuicao">Contribuicao</h2>
+<h2 id="contribuicao">Contribuicao 🤝</h2>
 
 1. Crie uma branch a partir da main.
 2. Implemente sua alteracao.
@@ -388,7 +394,7 @@ npm run build
 
 ---
 
-## Licenca
+## Licenca 📄
 
 Este projeto esta licenciado sob a MIT License. Veja o arquivo LICENSE.
 
