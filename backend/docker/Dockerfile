@@ -17,6 +17,7 @@ RUN addgroup app \
  
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt \
+    # Necessário pois o processo da aplicação é executado como um usuário não-root, e algumas libs precisam escrever em seus diretórios de instalação para funcionar corretamente.
     && chown -R app:app /usr/local/lib/python3.11/site-packages/
 
 COPY --chown=app:app . .
