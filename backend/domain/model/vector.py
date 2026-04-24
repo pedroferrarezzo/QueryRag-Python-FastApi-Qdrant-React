@@ -1,8 +1,8 @@
 from pydantic import BaseModel
-from .object import Object
+from ..vo.object import Object
 
 class Vector(BaseModel):
-    """Classe para representar um conteúdo vetorizado via embedding."""
+    """Entidade de domínio para representar um conteúdo vetorizado via embedding."""
 
     vector: list[float]
     """vetor resultante do embedding."""

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import AsyncIterator
-from domain import Document
+from domain.model import Document
 
 class LmmModel(ABC):
     """Porta de saída para modelos de linguagem multimodal."""

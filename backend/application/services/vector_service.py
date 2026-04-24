@@ -1,5 +1,6 @@
 from application.dto import DocumentDto, VectorDto, ObjectDto, MetadataDto
-from domain import Vector, Object
+from domain.model import Vector
+from domain.vo import Object
 from domain.exceptions import InvalidValueException
 from domain.ports.driven import VectorRepository
 from application.ports.driving import VectorUseCase

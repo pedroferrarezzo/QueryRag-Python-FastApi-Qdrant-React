@@ -3,3 +3,4 @@ from .embedding_use_case_port import EmbeddingUseCase
 from .vector_use_case_port import VectorUseCase
 from .lmm_use_case_port import LmmUseCase
 from .object_storage_use_case_port import ObjectStorageUseCase
+from .content_use_case_port import ContentUseCase

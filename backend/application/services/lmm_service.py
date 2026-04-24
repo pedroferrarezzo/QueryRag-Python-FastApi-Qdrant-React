@@ -1,7 +1,8 @@
 from typing import AsyncIterator
 
 from domain.exceptions import InvalidValueException, LmmException
-from domain import Document, Metadata, Object
+from domain.model import Document
+from domain.vo import Metadata, Object
 from application.dto import DocumentDto
 from domain.ports.driven import LmmModel
 from application.ports.driving import LmmUseCase

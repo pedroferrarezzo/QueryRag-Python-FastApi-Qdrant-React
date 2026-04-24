@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class Object(BaseModel):
-    """Classe para armazenar informações de um objeto."""
+    """Value Object para armazenar informações de um objeto."""
     
     key: str
     """chave de armazenamento do objeto."""

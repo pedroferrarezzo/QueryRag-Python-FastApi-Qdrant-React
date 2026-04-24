@@ -1,6 +1,6 @@
 from infrastructure.adapters.driven import GeminiEmbeddingModel, QdrantVectorRepository, DoclingDocumentParser, GeminiLmmModel, MinioObjectStorageRepository
-from application.ports.driving import EmbeddingUseCase, VectorUseCase, DocumentParserUseCase, LmmUseCase, ObjectStorageUseCase
-from application.services import EmbeddingService, VectorService, DocumentParserService, LmmService, ObjectStorageService
+from application.ports.driving import EmbeddingUseCase, VectorUseCase, DocumentParserUseCase, LmmUseCase, ObjectStorageUseCase, ContentUseCase
+from application.services import EmbeddingService, VectorService, DocumentParserService, LmmService, ObjectStorageService, ContentService
 
 def get_embedding_service() -> EmbeddingUseCase:
     """Factory function para obter a implementação do serviço de embedding."""
@@ -23,3 +23,7 @@ def get_lmm_service() -> LmmUseCase:
 def get_object_storage_service() -> ObjectStorageUseCase:
     """Factory function para obter a implementação do serviço de armazenamento de objetos."""
     return ObjectStorageService(MinioObjectStorageRepository())
+
+def get_content_service() -> ContentUseCase:
+    """Factory function para obter a implementação do serviço de processamento de conteúdo."""
+    return ContentService()

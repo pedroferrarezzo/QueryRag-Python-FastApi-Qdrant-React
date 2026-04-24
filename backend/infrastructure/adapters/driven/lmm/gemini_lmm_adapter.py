@@ -1,4 +1,4 @@
-from domain import Document
+from domain.model import Document
 from typing import AsyncIterator
 from google.genai import types
 from infrastructure.config.gemini_config import client

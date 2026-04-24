@@ -6,8 +6,9 @@ from fastapi import UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from application.dto import IngestResultDto, VectorDto, ObjectDto
 from fastapi import APIRouter, Depends
-from infrastructure.config.ioc.service import get_object_storage_service, get_embedding_service, get_vector_service, get_document_parser_service
-from application.ports.driving import ObjectStorageUseCase, EmbeddingUseCase, VectorUseCase, DocumentParserUseCase
+from infrastructure.config.ioc.service import get_object_storage_service, get_embedding_service, get_vector_service, get_document_parser_service, get_content_service
+from infrastructure.config.env_config import CHUNK_LIST_MAX_LENGTH
+from application.ports.driving import ObjectStorageUseCase, EmbeddingUseCase, VectorUseCase, DocumentParserUseCase, ContentUseCase
 
 router = APIRouter()
 
@@ -17,7 +18,8 @@ async def ingest(
     object_storage_service: ObjectStorageUseCase = Depends(get_object_storage_service),
     embedding_service: EmbeddingUseCase = Depends(get_embedding_service),
     vector_service: VectorUseCase = Depends(get_vector_service),
-    document_parser_service: DocumentParserUseCase = Depends(get_document_parser_service)
+    document_parser_service: DocumentParserUseCase = Depends(get_document_parser_service),
+    content_service: ContentUseCase = Depends(get_content_service)
 ):
     if not file or not file.filename:
         raise ValueError("Nenhum arquivo fornecido para ingestão.")
@@ -53,7 +55,7 @@ async def ingest(
             path = tmp.name
             text = document_parser_service.extract_text(path)
 
-            chunks = embedding_service.chunk_text(text)
+            chunks = content_service.chunk_text(text, CHUNK_LIST_MAX_LENGTH)
             vectors = await embedding_service.get_vectors(contents=chunks)
 
             vectors = [VectorDto(
@@ -65,12 +67,12 @@ async def ingest(
             ) for chunk, vector in zip(chunks, vectors)]
 
             await vector_service.ingest_vectors(vectors)
+
+            ingest_result.chunks_stored = len(vectors)
             put_log_context("embedding_method_type", "docling_and_chunking")
         finally:        
             if path:
                 os.remove(path)
-
-    ingest_result.chunks_stored = len(chunks)
 
     return JSONResponse(status_code=201, content=ingest_result.model_dump())
 

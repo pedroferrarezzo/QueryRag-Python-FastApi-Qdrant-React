@@ -2,7 +2,8 @@ import uuid
 import numpy as np
 from qdrant_client.models import PointStruct
 
-from domain import Document, Metadata, Vector
+from domain.model import Document, Vector
+from domain.vo import Metadata
 from infrastructure.config.env_config import QDRANT_COLLECTION
 from infrastructure.config.qdrant_config import client
 

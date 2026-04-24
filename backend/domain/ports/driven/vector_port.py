@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from domain import Document, Vector
+from domain.model import Document, Vector
 
 class VectorRepository(ABC):
     """Porta de saída para o repositório de vetores."""

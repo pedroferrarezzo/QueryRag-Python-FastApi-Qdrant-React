@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from .object import Object
 
 class Metadata(BaseModel):
-    """Classe para armazenar metadados de um documento recuperado durante o RAG."""
+    """Value Object para armazenar metadados de um documento recuperado durante o RAG."""
 
     type: str
     """Tipo do documento."""
