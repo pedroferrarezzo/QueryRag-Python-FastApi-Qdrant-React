@@ -12,6 +12,7 @@ Plataforma de `Retrieval-Augmented Generation` (`RAG`) multimodal para ingestao,
 	<a href="#infraestrutura-local">Infraestrutura Local</a> •
 	<a href="#instalacao-e-uso">Instalacao e Uso</a> •
 	<a href="#configuracao-de-ambiente">Configuracao de Ambiente</a> •
+	<a href="#principios-solid-aplicados">Principios SOLID Aplicados</a> •
 	<a href="#estrutura-do-projeto">Estrutura do Projeto</a> •
 	<a href="#debitos-tecnicos-e-melhorias">Debitos Tecnicos e Melhorias</a> •
 	<a href="#contribuicao">Contribuicao</a>
@@ -323,6 +324,18 @@ Referencia do modelo de embedding usado neste projeto: `Gemini Embeddings 2` (pr
 |---|---|
 | `VITE_API_ENDPOINT` | Base URL HTTP do backend |
 | `VITE_WS_CHAT_ENDPOINT` | URL `WebSocket` do chat |
+
+---
+
+<h2 id="principios-solid-aplicados">Principios SOLID Aplicados 🧱</h2>
+
+O projeto segue `SOLID` de forma natural por meio da arquitetura hexagonal, das portas abstratas e de servicos com responsabilidades especificas.
+
+- `S` - `Single Responsibility Principle`: cada servico tem uma responsabilidade clara, como `ContentService` para chunking, `DocumentParserService` para extracao, `EmbeddingService` para embeddings, `VectorService` para busca e persistencia vetorial, `ObjectStorageService` para objetos e `LmmService` para geracao de resposta.
+- `O` - `Open/Closed Principle`: o comportamento pode ser estendido com novos adaptadores e provedores sem alterar os servicos de aplicacao, porque eles dependem de portas como `DocumentParser`, `EmbeddingModel`, `VectorRepository`, `ObjectStorageRepository` e `LmmModel`.
+- `L` - `Liskov Substitution Principle`: qualquer implementacao concreta que respeite o contrato de uma porta pode substituir outra sem quebrar o fluxo da aplicacao, por exemplo um novo provedor de embeddings pode ser usado no lugar do atual desde que implemente `EmbeddingModel`.
+- `I` - `Interface Segregation Principle`: as portas sao pequenas e especificas para cada caso de uso, evitando interfaces grandes e acopladas; por isso o projeto separa contratos como `ContentUseCase`, `DocumentParserUseCase`, `EmbeddingUseCase`, `VectorUseCase`, `ObjectStorageUseCase` e `LmmUseCase`.
+- `D` - `Dependency Inversion Principle`: a camada de aplicacao depende de abstracoes, nao de implementacoes concretas, e os detalhes de infraestrutura entram por injeção via portas, como visto em `DocumentParserService`, `EmbeddingService` e nos demais servicos da aplicacao.
 
 ---
 
