@@ -13,7 +13,7 @@ class LogContextFilter(logging.Filter):
 
 def put_log_context(key, value):
     """Adiciona um par chave-valor ao contexto de log."""
-    ctx = _log_context.get().copy()
+    ctx = _log_context.get()
     ctx[key] = value
     _log_context.set(ctx)
 
