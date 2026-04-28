@@ -26,6 +26,10 @@ O `QueryRag` foi construido para responder perguntas com base em documentos e ar
 
 Neste projeto, os embeddings sao gerados com `Google Gemini Embeddings 2` (`gemini-embedding-2-preview`), o primeiro modelo de embeddings multimodal do Google: https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/embedding-2?hl=pt-br
 
+> ℹ️ O plano gratuito do `Google Gemini` permite criar uma chave de API capaz de chamar todos os modelos utilizados neste projeto (`embedding` e `lmm`). Com apenas algumas limitações de `Rate Limiting`.
+>
+> Acesse: https://aistudio.google.com
+
 O fluxo principal funciona assim:
 
 1. 📤 Arquivos sao enviados para ingestao.
