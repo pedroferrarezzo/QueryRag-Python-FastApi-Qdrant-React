@@ -6,14 +6,14 @@ Plataforma de `Retrieval-Augmented Generation` (`RAG`) multimodal para ingestao,
 	<a href="#visao-geral">Visao Geral</a> •
 	<a href="#recursos-principais">Recursos Principais</a> •
 	<a href="#apis">APIs</a> •
+    <a href="#tecnologias">Tecnologias</a> •
+    <a href="#estrutura-do-projeto">Estrutura do Projeto</a> •
 	<a href="#arquitetura">Arquitetura</a> •
+    <a href="#principios-solid-aplicados">Principios SOLID Aplicados</a> •
 	<a href="#fluxos-rag">Fluxos RAG</a> •
-	<a href="#tecnologias">Tecnologias</a> •
 	<a href="#infraestrutura-local">Infraestrutura Local</a> •
 	<a href="#instalacao-e-uso">Instalacao e Uso</a> •
 	<a href="#configuracao-de-ambiente">Configuracao de Ambiente</a> •
-	<a href="#principios-solid-aplicados">Principios SOLID Aplicados</a> •
-	<a href="#estrutura-do-projeto">Estrutura do Projeto</a> •
 	<a href="#debitos-tecnicos-e-melhorias">Debitos Tecnicos e Melhorias</a> •
 	<a href="#contribuicao">Contribuicao</a>
 </div>
@@ -69,6 +69,71 @@ O fluxo principal funciona assim:
 
 ---
 
+<h2 id="tecnologias">Tecnologias 🛠️</h2>
+
+### Backend
+
+- `Python 3.11`
+- `FastAPI` + `Uvicorn`
+- `Google Gemini API` (`Gemini Embeddings 2` para vetorizacao multimodal e `Gemini LMM` para geracao)
+- `Docling` (extracao de texto)
+- `Qdrant Client`
+- `miniopy-async` (`MinIO`)
+- `pydub` + `static-ffmpeg` (processamento de audio)
+
+### Frontend
+
+- `React 19` + `TypeScript`
+- `Vite`
+- `Tailwind CSS`
+- `Radix UI` / `shadcn`
+- `WebSocket` nativo
+
+### Infra local
+
+- `Docker` e `Docker Compose`
+- `Qdrant`
+- `MinIO`
+- `Nginx` (servindo build do frontend)
+
+---
+
+<h2 id="estrutura-do-projeto">Estrutura do Projeto 🗂️</h2>
+
+```text
+backend/
+	application/
+		services/
+		ports/
+		dto/
+	domain/
+		model/
+		vo/
+		ports/
+		exceptions/
+	infrastructure/
+		adapters/
+			driving/controllers/
+			driven/
+		config/
+		utils/
+
+frontend/
+	src/
+		pages/
+		components/
+		contexts/
+		lib/
+		types/
+		config/
+
+docker/
+	docker-compose.yaml
+	env-example
+```
+
+---
+
 <h2 id="arquitetura">Arquitetura 🏗️</h2>
 
 O projeto segue uma abordagem de `Hexagonal Architecture`:
@@ -90,6 +155,18 @@ flowchart LR
 		PORTS --> ADP3[MinIO Adapter]
 		PORTS --> ADP4[Docling Parser Adapter]
 ```
+
+---
+
+<h2 id="principios-solid-aplicados">Principios SOLID Aplicados 🧱</h2>
+
+O projeto segue `SOLID` de forma natural por meio da arquitetura hexagonal, das portas abstratas e de servicos com responsabilidades especificas.
+
+- `S` - `Single Responsibility Principle`: cada servico tem uma responsabilidade clara, como `ContentService` para chunking, `DocumentParserService` para extracao, `EmbeddingService` para embeddings, `VectorService` para busca e persistencia vetorial, `ObjectStorageService` para objetos e `LmmService` para geracao de resposta.
+- `O` - `Open/Closed Principle`: o comportamento pode ser estendido com novos adaptadores e provedores sem alterar os servicos de aplicacao, porque eles dependem de portas como `DocumentParser`, `EmbeddingModel`, `VectorRepository`, `ObjectStorageRepository` e `LmmModel`.
+- `L` - `Liskov Substitution Principle`: qualquer implementacao concreta que respeite o contrato de uma porta pode substituir outra sem quebrar o fluxo da aplicacao, por exemplo um novo provedor de embeddings pode ser usado no lugar do atual desde que implemente `EmbeddingModel`.
+- `I` - `Interface Segregation Principle`: as portas sao pequenas e especificas para cada caso de uso, evitando interfaces grandes e acopladas; por isso o projeto separa contratos como `ContentUseCase`, `DocumentParserUseCase`, `EmbeddingUseCase`, `VectorUseCase`, `ObjectStorageUseCase` e `LmmUseCase`.
+- `D` - `Dependency Inversion Principle`: a camada de aplicacao depende de abstracoes, nao de implementacoes concretas, e os detalhes de infraestrutura entram por injeção via portas, como visto em `DocumentParserService`, `EmbeddingService` e nos demais servicos da aplicacao.
 
 ---
 
@@ -168,35 +245,6 @@ sequenceDiagram
 		end
 		WS-->>F: evento type=end
 ```
-
----
-
-<h2 id="tecnologias">Tecnologias 🛠️</h2>
-
-### Backend
-
-- `Python 3.11`
-- `FastAPI` + `Uvicorn`
-- `Google Gemini API` (`Gemini Embeddings 2` para vetorizacao multimodal e `Gemini LMM` para geracao)
-- `Docling` (extracao de texto)
-- `Qdrant Client`
-- `miniopy-async` (`MinIO`)
-- `pydub` + `static-ffmpeg` (processamento de audio)
-
-### Frontend
-
-- `React 19` + `TypeScript`
-- `Vite`
-- `Tailwind CSS`
-- `Radix UI` / `shadcn`
-- `WebSocket` nativo
-
-### Infra local
-
-- `Docker` e `Docker Compose`
-- `Qdrant`
-- `MinIO`
-- `Nginx` (servindo build do frontend)
 
 ---
 
@@ -324,54 +372,6 @@ Referencia do modelo de embedding usado neste projeto: `Gemini Embeddings 2` (pr
 |---|---|
 | `VITE_API_ENDPOINT` | Base URL HTTP do backend |
 | `VITE_WS_CHAT_ENDPOINT` | URL `WebSocket` do chat |
-
----
-
-<h2 id="principios-solid-aplicados">Principios SOLID Aplicados 🧱</h2>
-
-O projeto segue `SOLID` de forma natural por meio da arquitetura hexagonal, das portas abstratas e de servicos com responsabilidades especificas.
-
-- `S` - `Single Responsibility Principle`: cada servico tem uma responsabilidade clara, como `ContentService` para chunking, `DocumentParserService` para extracao, `EmbeddingService` para embeddings, `VectorService` para busca e persistencia vetorial, `ObjectStorageService` para objetos e `LmmService` para geracao de resposta.
-- `O` - `Open/Closed Principle`: o comportamento pode ser estendido com novos adaptadores e provedores sem alterar os servicos de aplicacao, porque eles dependem de portas como `DocumentParser`, `EmbeddingModel`, `VectorRepository`, `ObjectStorageRepository` e `LmmModel`.
-- `L` - `Liskov Substitution Principle`: qualquer implementacao concreta que respeite o contrato de uma porta pode substituir outra sem quebrar o fluxo da aplicacao, por exemplo um novo provedor de embeddings pode ser usado no lugar do atual desde que implemente `EmbeddingModel`.
-- `I` - `Interface Segregation Principle`: as portas sao pequenas e especificas para cada caso de uso, evitando interfaces grandes e acopladas; por isso o projeto separa contratos como `ContentUseCase`, `DocumentParserUseCase`, `EmbeddingUseCase`, `VectorUseCase`, `ObjectStorageUseCase` e `LmmUseCase`.
-- `D` - `Dependency Inversion Principle`: a camada de aplicacao depende de abstracoes, nao de implementacoes concretas, e os detalhes de infraestrutura entram por injeção via portas, como visto em `DocumentParserService`, `EmbeddingService` e nos demais servicos da aplicacao.
-
----
-
-<h2 id="estrutura-do-projeto">Estrutura do Projeto 🗂️</h2>
-
-```text
-backend/
-	application/
-		services/
-		ports/
-		dto/
-	domain/
-		model/
-		vo/
-		ports/
-		exceptions/
-	infrastructure/
-		adapters/
-			driving/controllers/
-			driven/
-		config/
-		utils/
-
-frontend/
-	src/
-		pages/
-		components/
-		contexts/
-		lib/
-		types/
-		config/
-
-docker/
-	docker-compose.yaml
-	env-example
-```
 
 ---
 
