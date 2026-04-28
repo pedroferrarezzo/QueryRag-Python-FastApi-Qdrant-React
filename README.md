@@ -378,7 +378,7 @@ docker/
 <h2 id="debitos-tecnicos-e-melhorias">Debitos Tecnicos e Melhorias 📌</h2>
 
 - ⚠️ Reranking ainda nao implementado no fluxo de recuperacao (campo rerank_score permanece nulo).
-- ℹ️ Estrategias de observabilidade (tracing distribuido e metricas de qualidade de recuperacao) podem ser expandidas.
+- ℹ️ Estrategias de observabilidade (tracing distribuido e metricas de qualidade de recuperacao) podem ser expandidas. Atualmente a aplicação conta com logging canônico nos principais fluxos.
 - 🧪 Pipeline de avaliacao automatica da qualidade das respostas RAG pode ser adicionada.
 - 🔐 Implementação de autenticação/autorização.
 - 🧩 Implementação de suporte para outros LLMs/Modelos de embedding multimodal via Strategy Pattern + Factory Pattern (Sentence Transformers SDK, OpenAI SDK, etc...).
