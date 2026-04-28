@@ -69,7 +69,7 @@ O fluxo principal funciona assim:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 
->ℹ️ Em `Docker Compose`, o backend e publicado na porta definida por `BACKEND_PORT` (padrao no exemplo: 8005).
+>ℹ️ No `Docker Compose`, o backend é publicado na porta definida pela variável de ambiente `BACKEND_PORT` (padrao no exemplo: 8005).
 
 ---
 
