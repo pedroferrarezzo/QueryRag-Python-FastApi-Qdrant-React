@@ -1,4 +1,4 @@
-# `QueryRag` 🚀
+# QueryRag 🤖📚
 
 Plataforma de `Retrieval-Augmented Generation` (`RAG`) multimodal para ingestao, indexacao vetorial e consulta inteligente de conteudo, com backend em `FastAPI`, armazenamento vetorial em `Qdrant`, armazenamento de objetos em `MinIO` e interface web em `React`.
 
